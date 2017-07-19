@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n staticfiles %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+	<head>
+<!-- Latest compiled and minified CSS -->
+
+<!-- jQuery library -->
+
+<!-- Latest compiled JavaScript -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<style>
+	.span8{
+		width:700px;
+		padding-top:10px;
+	}
+	.navbar{
+		margin-bottom:0px;
+	}
+</style>
+
+</head>
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer"></div>
+                <section>
+                	<div class="row">
+                    	<div class="span12">
+                        	<h2 class="title"><div class="sponsortitle">{{page.sponsoruspage.page_header}}</div></span></h2> 
+                        </div>
+                    	</div>
+			<div class="row">
+                   	 <div class="span12 sponsorblurb" style="background-image: url({% static  "media/uploads/static images/background.png"%})">{{page.sponsoruspage.page_blurb|richtext_filters|safe}}</div>
+			</div>
+		<div class="row">
+		<div class="span12">
+		<div class="panel-group" id="accordion">
+		{% for package in page.sponsoruspage.sponsorship_package.all %}
+ 		 <div class="panel panel-default">
+    			<div class="panel-heading">
+  			    <h4 class="panel-title">
+     			   <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}">
+       			  <div class="row"><div class="span12 mytitle">{{package.title}}</div></div></a>
+     			   </h4>
+ 		       </div>
+   		        <div id="collapse{{forloop.counter}}" class="panel-collapse collapse {% if forloop.first %} in {% endif%}">
+     				<div class="panel-body"><div class="mybody">{{package.description|richtext_filters|safe}}</div></div>
+    			</div>
+ 		 </div>
+ 		 {% endfor %}
+			<div class="panel panel-default">
+    			<div class="panel-heading">
+  			    <h4 class="panel-title">
+     			   <a data-toggle="collapse" data-parent="#accordion" href="#collapselast">
+       			  <div class="row"><div class="span12 mytitle">{{page.sponsoruspage.misc_items}}</div></div></a>
+     			   </h4>
+ 		       </div>
+   		        <div id="collapselast" class="panel-collapse collapse">
+     				<div class="panel-body"><div class="mybody">{{page.sponsoruspage.misc_items_blurb|richtext_filters|safe}}</div></div>
+    			</div>
+
+			 </div>	
+	        </div>
+		</div>
+		</div>
+                    <div class="row">
+                    <div class="span4"></div>
+                    <div class="span4">{{page.sponsoruspage.contact|richtext_filter|safe}}</div>
+                    </div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+{% endblock %}

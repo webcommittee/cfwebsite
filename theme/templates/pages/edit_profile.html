@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+    {% if user.companyprofile %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('option').mousedown(function(e) {
+            e.preventDefault();
+            $(this).prop('selected', !$(this).prop('selected'));
+        return false;
+        });
+        $('.rep-formset').formset({
+            addText: 'Add representative',
+            deleteText: 'remove'
+        });
+    });
+</script>
+    {% endif %}
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer">
+                <section>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span10">
+                                        {% if request.GET.sent %}
+                                        {% editable page.form.response %}
+                                        {{ page.form.response|richtext_filters|safe }}
+                                        {% endeditable %}
+                                        {% else %}
+                                             {% errors_for form %}
+                            <form id="ajax-contact-form" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="fieldWrapper">
+                                    <!-- Display each form. The as_p method wraps each element in a paragraph
+                                         (<p>) element. This ensures each element appears on a new line,
+                                         making everything look neater. -->
+                                    {% if user.companyprofile %}
+                                    <div class="row">
+
+                                        <div class="span8">
+                                            <ul class="nav nav-tabs">
+                                                <li><a href="/dashboard">Dashboard</a></li>
+                                                <li class="active"><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                                <li><a href="/dashboard/prepaymentscreen">Pay</a></li>
+                                                <li><a href="/agenda">Agenda</a></li>
+                                                <li><a href="/student-search">Student-Search</a></li>
+                                            </ul> 
+                                        </div>
+                                    </div>
+                                    <h3 class ="title"> Edit your company profile </h3>
+                                    <div class="row">
+                                        <div class="span8">
+                                        <label> Company Name </label>
+                                            {{form.company.errors}}
+                                            {{form.company}} 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span8">
+                                        <label> Application Website </label>
+                                            {{form.company_website.errors}}
+                                            {{form.company_website}} 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span8">
+                                        <label> Company Bio </label>
+                                            {{form.company_bio.errors}}
+                                            {{form.company_bio}} 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="ruben_buffer"></div>
+                                        <div class="span4">
+                                            <label>What major(s) are you hiring? <span id="butimarecruiter">(Required)</span></label>
+                                            {{form.majors_wanted.errors}}
+                                            {{form.majors_wanted}}
+                                        </div>
+                                        <div class="span4">
+                                            <label>What grade levels are you hiring? <span id="butimarecruiter">(Required)</span></label>
+                                            {{form.majors_wanted.errors}}
+                                            {{form.grade_level_wanted}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span4">
+                                            <label>Days Attending <span id="butimarecruiter">(Required)</span></label>
+                                            {{form.days_attending.errors}}
+                                            {{form.days_attending}}
+                                        </div>
+                                        <div class="span4">
+                                            <label>Logo</label>
+                                            {{form.logo.errors}}
+                                            {{form.logo}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span8">
+                                        <h3 class ="title"> Logistical information <span id="butimarecruiter"> (Please make sure this information is correct!) </span></h3> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span4">
+                                            <label>How many tables are you requesting on friday? <span id="butimarecruiter">(Required)</span></label>
+                                                {{form.friday_number_of_tables.errors}}
+                                                {{form.friday_number_of_tables}}
+                                        </div>
+                                        <div class="span4">
+                                            <label>How many tables are you requesting on saturday? <span id="butimarecruiter">(Required)</span></label>
+                                                {{form.saturday_number_of_tables.errors}}
+                                                {{form.saturday_number_of_tables}}
+                                        </div>
+                                    </div>
+				    <div class="row">
+                                        <div class="span4">
+                                            <label>Will you be needing interview rooms on Friday?  If so, how many?</label>
+                                                {{form.interview_rooms_friday.errors}}
+                                                {{form.interview_rooms_friday}}
+                                                <br>From:<br>
+                                                {{form.interview_friday_from.errors}}
+                                                {{form.interview_friday_from}}
+                                                <br>To:<br>
+                                                {{form.interview_friday_to.errors}}
+                                                {{form.interview_friday_to}}
+                                        </div>
+                                        <div class="span4">
+                                            <label>Will you be needing interview rooms on Satuday? If so, how many?</label>
+                                                {{form.interview_rooms_saturday.errors}}
+                                                {{form.interview_rooms_saturday}}
+                                                <br>From:<br>
+                                                {{form.interview_saturday_from.errors}}
+                                                {{form.interview_saturday_from}}
+                                                <br>To:<br>
+                                                {{form.interview_saturday_to.errors}}
+                                                {{form.interview_saturday_to}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span4">
+                                            <label>Would you like to sponsor the career fair? If so, pick the sponsorship level you are interested in from below <a href="/sponsor">(more info)</a>:</label>
+                                                {{form.sponsor.errors}}
+                                                {{form.sponsor}}
+                                        </div>
+				<div class="span4">
+					<label>Would you like to pick a sponsorship item?  If so pick the item(s) that interests you from below. <a href="/sponsor">(more info)</a></label>
+					{{form.sponsorshipitem.errors}}
+					{{form.sponsorshipitem}}
+				</div>
+                                      </div>
+                                    <div class="row">
+                                        <div class="span8">
+                                            <label>Who do you plan on bringing? (include yourself, check the box if they are an RPI alum)</label>
+                                            <div class="row">
+                                                <div class="span8">
+                                                {{ rep_formset.management_form }}
+
+                                                {% for rep_form in rep_formset %}
+                                                    <div class="rep-formset">
+                                                        {{ rep_form.rep }}
+                                                        {% if rep_form.rep.errors %}
+                                                            {% for error in rep_form.rep.errors %}
+                                                                {{ error|escape }}
+                                                            {% endfor %}
+                                                        {% endif %}
+							{{ rep_form.days_attending.errors }}
+							{{ rep_form.days_attending }}
+                                                        {{ rep_form.is_alumni }}
+                                                        {% if rep_form.is_alumni.errors %}
+                                                            {% for error in rep_form.is_alumni.errors %}
+                                                                {{ error|escape }}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+
+                                                {% if rep_formset.non_form_errors %}
+                                                    {% for error in rep_formset.non_form_errors %}
+                                                        {{ error|escape }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <h3 class ="title"> Edit your student profile </h3>
+                                        <div class="row">
+                                            <div class="span8">
+                                                <ul class="nav nav-tabs">
+                                                    <li><a href="/dashboard">Dashboard</a></li>
+                                                    <li class="active"><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                                    <!-- <li><a href="/volunteer">Volunteer</a></li> -->
+                                                    <li><a href="/company-search">Company Search</a></li>
+                                                </ul>    
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span8">
+                                                {{form.phone_number.errors}}
+                                                {{form.phone_number}} 
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span5">
+                                                {{form.hometown.errors}}
+                                                {{form.hometown}}
+                                            </div>
+                                            <div class="span2">
+                                                {{form.state.errors}}
+                                                {{form.state}} 
+                                            </div>
+                                            <div class="span1">
+                                                {{form.open_to_relocation}}
+                                                {{form.open_to_relocation.help_text}}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span8">
+                                                {{form.bio.errors}}
+                                                {{form.bio}} 
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span4">
+                                                <label>Resume</label>
+                                                {{form.resume.errors}}
+                                                {{form.resume}}
+                                            </div>
+                                            <div class="span4">
+                                                <label>Picture</label>
+                                                {{form.picture.errors}}
+
+                                                {{form.picture}}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="ruben_buffer"></div>
+                                            <div class="span4">
+                                                <label>Major(s)<span id="butimarecruiter">(required)  Select multiple with ctrl </span></label>
+                                                {{form.major.error}}
+                                                {{form.major}}
+                                            </div>
+                                            <div class="span4">
+                                                <label>Minor(s)</label>
+                                                {{form.minor.error}}
+                                                {{form.minor}}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span4">
+                                                <div class="row">
+                                                    <div class="span4">
+                                                        <label>GPA</label>
+                                                        {{form.GPA.errors}}
+                                                        {{form.GPA}}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="span4">
+                                                        <label>Website</label>
+                                                        {{form.website.errors}}
+                                                        {{form.website}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="span4">
+                                                <label>Grade level</label>
+                                                {{form.grade_level.errors}}
+                                                {{form.grade_level}}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            <div class="form-actions">
+                                 <input class="btn btn-default btn-lg" type="submit"
+                                  value="{% if page.form.button_text %}{{ page.form.button_text }}{% else %}{% trans "Apply changes" %}{% endif %}">
+                             </div> 
+                        </div>                  
+                    </div>
+                </section>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}

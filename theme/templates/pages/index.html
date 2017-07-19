@@ -1,0 +1,238 @@
+{% extends "pages/page.html" %}
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+{% block all_content %}
+
+
+                                                                                                                                                                 
+<!--                                                                                                                                                                  
+                                               
+                                               
+                                               
+                                               
+                                  .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                  @                                @
+                                 @  Hey there, my name is kangaru!  @       
+                                @          I'm made of ascii!        @
+                                @                                    @
+                                @   Speaking of kangarus, next time  @ 
+                                @      you see ruben, tell him I     @
+                                @                 hi!                @
+                                @                                  @@
+                                @                               @@@       
+                                 @       @@@@@@@@@@@@@@@@@@@@@@      
+                                  @   . #      
+                          ::       @  @          
+                          :::      @ @         
+                          ::::      @           
+                           :::::               
+               ::::#        :::::              
+            :::::::::::    ::::::::            
+          ::::::::::::::: ::::::::             
+         ::::::::::::::::::::::                
+        ::::::::::::::::::::::                 
+       :::::::::::::::::::::::                 
+      :::::::::::::::::::::::                  
+     ::::::::::::::::::::::::                  
+     :::::::::::::::::::::::                   
+    ::::: ::::::::::::  :::                    
+    ::::  ::::::::::     :::                   
+    :::#   ::::::::        ::                  
+    :::     :::::::    :::::                   
+   ::::      :::::       '                     
+   :::       :::::                             
+   :::       :::::                             
+   :::       ::::                              
+    ::       ::::                              
+    ::       :::                               
+    ::      ::::                               
+    ::      :::                                
+    ::     :::                                 
+    ::    :::                                  
+    ::    :::                                  
+    ::    :::                                  
+    ::     ::                                  
+    ::     :::                                 
+    ::      ::                                 
+   ::       ::                                 
+   ::       ::                                 
+  ::         :                                 
+ :           :                                 
+             :                                 
+             :                                 
+                                               
+                                                                                                            
+                                                                                                                                                                 
+                                                       -->                                                                                                           
+                                                                                                                                                                 
+                                                                                                                                                                 
+                                                                                                                                                                 
+                                                                                                                                                                 
+                                                                                                                                                                 
+
+
+    <!--page_container-->
+    <div class="page_container">
+
+    {% if page.homepage.slides.all %}
+    <!--slider-->
+    <div id="main_slider">
+        <div class="camera_wrap" id="camera_wrap_1">
+            {% for slide in page.homepage.slides.all %}
+            <div data-src="{{ MEDIA_URL }}{% thumbnail slide.image 1920 690 %}"></div>
+            {% endfor %}                                       
+        </div><!-- #camera_wrap_1 -->
+        <div class="clear"></div>   
+    </div>        
+    <!--//slider-->
+    {% endif %}    
+        <!--//slider-->
+                       
+        <!--planning-->
+        <div class="wrap planning">
+            <div class="container">
+		{% if not user.is_authenticated %}
+                <div class="row">
+                    <div class="span3">
+                        <a href={{page.homepage.IconUrl1}}>
+                            <span class="img_icon icon1" style="background-image:url("/static/img/studenticons.png");"></span>
+                            <span class="link_title">
+                             {% editable page.homepage.IconTitle1 %}
+                              {{page.homepage.IconTitle1}}
+                             {% endeditable %}
+                             </span>
+                             {% editable page.homepage.IconText1 %}
+                              {{page.homepage.IconText1}}
+                             {% endeditable %}
+                        </a>
+
+                    </div>
+                    <div class="span3">
+                        <a href={{page.homepage.IconUrl2}}>
+                            <span class="img_icon icon2"></span>
+                            <span class="link_title">                              
+                             {% editable page.homepage.IconTitle2 %}
+                              {{page.homepage.IconTitle2}}
+                             {% endeditable %}
+                             </span>
+                             {% editable page.homepage.IconText2 %}
+                              {{page.homepage.IconText2}}
+                             {% endeditable %}
+                        </a>
+                    </div>
+                    <div class="span3">
+                        <a href={{page.homepage.IconUrl3}}>
+                            <span class="img_icon icon3"></span>
+                            <span class="link_title">                             
+                             {% editable page.homepage.IconTitle3 %}
+                              {{page.homepage.IconTitle3}}
+                             {% endeditable %}
+                             </span>
+                             {% editable page.homepage.IconText3 %}
+                              {{page.homepage.IconText3}}
+                             {% endeditable %}
+                        </a>
+                    </div>
+                    <div class="span3">
+                        <a href={{page.homepage.IconUrl4}}>
+                            <span class="img_icon icon4"></span>
+                            <span class="link_title">
+                             {% editable page.homepage.IconTitle4 %}
+                              {{page.homepage.IconTitle4}}
+                             {% endeditable %}
+                             </span>
+                             {% editable page.homepage.IconText4 %}
+                              {{page.homepage.IconText4}}
+                             {% endeditable %}
+                        </a>
+                    </div>                              
+                </div>
+		{% endif %}
+            </div>
+        </div>
+        <!--//planning-->
+        
+        <!--Welcome-->
+        <div class="wrap block">
+            <div class="container welcome_block">
+                <div class="welcome_line welcome_t"></div>
+          {% editable page.homepage.hptime page.homepage.hpdate page.homepage.hploc page.homepage.heading page.homepage.subheading %}
+            
+          <span> {{ page.homepage.hpdate }}</span>
+          <span> {{ page.homepage.hptime }} </span>
+          <span> {{ page.homepage.hploc }}</span>
+          <span></span>
+          <span id="blurb">{{ page.homepage.subheading|richtext_filters|safe }}</span>
+          <span id="blurb2"></span>
+          
+          {% endeditable %}
+                <div class="welcome_line welcome_b"></div>
+            </div>
+        </div>
+        <!--//Welcome-->         
+        
+        <!--featured works-->
+        <div class="wrap block carousel_block">
+            <div class="container">
+                <h2 class="upper">{% editable page.homepage.featured_companies_heading %}
+          {{ page.homepage.featured_companies_heading }}
+          {% endeditable %}
+        </h2>
+                <div class="row">
+                {% if page.homepage.featured_companies.all %}
+                    <div class="span12">
+                        <ul id="mycarousel" class="jcarousel-skin-tango">
+                          {% for logo in page.homepage.featured_companies.all %}
+                          <li>
+                                <div class="hover_img">
+                                    <a href="{{logo.link_to}}"><img src="{{ MEDIA_URL }}{% thumbnail logo.image 300 300 %}"><span class="portfolio_zoom1"></span></a>                                    
+                                </div>
+                            </li> 
+                  {% endfor %}      
+                                                            
+                        </ul>                         
+                    </div>
+                {% endif %}                
+                </div>               
+            </div>
+        </div>        
+        <!--//featured works-->
+        
+        <!--Latest news-->
+        <div class="wrap block">
+            <div class="container">
+                <div class="row news_block">
+                    <div class="span6">
+                        <h2 class="title">{% editable page.homepage.misc_info_header %}
+                    {{ page.homepage.misc_info_header }}
+                    {% endeditable %}</h2>
+                        <p>{% editable page.homepage.misc_info_body %}
+                    {{ page.homepage.misc_info_body|richtext_filters|safe }}
+                    {% endeditable %}
+                    </div> 
+                    <div class="span6">
+                        <h2 class="title">{% editable page.homepage.announcement_header %}
+                        {{page.homepage.announcement_header}}
+                        {% endeditable %}</h2>
+                        <ul id="newscarousel" class="jcarousel-skin-tango">
+                         {% if page.homepage.announcements.all %}
+                         {% for ann in page.homepage.announcements.all %}
+                            <li>
+                                <div class="news_date">{{ann.date}}<span>{{ann.year}}</span></div>
+                                <div class="news_t"><a href="#">{{ann.title}}</a></div>
+                                <div class="news">Posted by <a href="#">{{ann.author}}</a></div>
+                                <div class="news_info">{{ann.announcement_text}}</div>
+                                <div class="clear"></div>
+                            </li>
+                         {% endfor %} 
+                         {% endif %}
+                         </ul> 
+                    </div>              
+                </div>
+            </div>
+        </div>
+        <!--Latest news-->
+        <!--//latest posts--> 
+    </div>
+    {% editable_loader %}
+    <!--//page_container-->
+{% endblock %}

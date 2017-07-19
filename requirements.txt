@@ -1,0 +1,4 @@
+Mezzanine==4.1.0
+django-mathfilters
+django-multiselectfield
+django-paypal

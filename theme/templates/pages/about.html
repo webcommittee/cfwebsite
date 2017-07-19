@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+{% block all_content %}
+
+
+ <!--page_container-->
+    <div class="page_container">
+
+    	<div class="wrap">
+        	<div class="container">
+                <div id="ruben_buffer"
+                    <section>
+                        <div class="row">
+                            <div class="span4">
+                                <h2 class="title"><span>
+                                 {% editable page.aboutpage.heading1 %}
+                                 {{page.aboutpage.heading1}}
+                                 {% endeditable %}</span></h2>
+                                <p>{% editable page.aboutpage.LeftColumn %}
+                                 {{page.aboutpage.LeftColumn|richtext_filters|safe }}
+                                 {% endeditable %}</p>                        
+                            </div>
+                            <div class="span4">
+                                <h2 class="title"><span>
+                                 {% editable page.aboutpage.heading2 %}
+                                 {{page.aboutpage.heading2}}
+                                 {% endeditable %}</span></h2>
+                                 <p>{% editable page.aboutpage.MidColumn %}
+                                 {{page.aboutpage.MidColumn|richtext_filters|safe }}
+                                 {% endeditable %}</p> 
+                            </div>
+                            <div class="span4">
+                                <h2 class="title"><span>
+                                 {% editable page.aboutpage.heading3 %}
+                                 {{page.aboutpage.heading3}}
+                                 {% endeditable %}</span></h2>
+                                  <p>{% editable page.aboutpage.RightColumn %}
+                                 {{page.aboutpage.RightColumn|richtext_filters|safe }}
+                                 {% endeditable %}</p> 
+                            </div>                        
+                        </div>
+                    </section>
+                    <section>
+                    	<h2 class="title"><span>{% editable page.aboutpage.heading4 %}
+                                 {{page.aboutpage.heading4}}
+                                 {% endeditable %}</span></h2>
+                                    <p>{% editable page.aboutpage.BottomRow %}
+                                    {{page.aboutpage.BottomRow|richtext_filters|safe }}
+                                    {% endeditable %}</p>
+
+                        
+            {% for committee in page.aboutpage.committee.all %}
+			<div class="row">   
+			    <div class="span4">
+			        <h3 class="title"><span>{{committee.committee_name}}</span></h2>
+			    </div>
+			</div>
+			<div class="row">
+			    {% for member in committee.committee_members.all %}
+                {%if forloop.counter0|divisibleby:4 %}
+                </div>
+                <div class="row">
+                {% endif %}
+                        <div class="span3">                            
+                            <div class="profile">
+                            	<img class="img-border" alt="" src="{{ MEDIA_URL }}{% thumbnail member.image 300 300 autocrop %}">
+                                {% editable member.position member.bio %}
+                                <h4>{{member.name}}</h4>
+                                <div class="profile_title"> {{member.position}} </div>
+                                <p>{{member.bio|richtext_filters|safe}}</p>
+                                {% endeditable %}
+                            </div>
+                        </div>
+				{% endfor %}
+                </div> 
+            {% endfor %}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% editable_loader %}
+    {% endblock %}

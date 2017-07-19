@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block all_content %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $('option').mousedown(function(e) {
+        e.preventDefault();
+        $(this).prop('selected', !$(this).prop('selected'));
+    return false;
+    });
+});
+</script>
+<div class="page_container">
+    <div class="wrap">
+        <div class="container">
+            <div id="ruben_buffer">
+            <section>
+                <div class="row">
+                     <div class="span3"> 
+                    </div>
+                    <div class="span8">
+                        <ul class="nav nav-tabs">
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                            <li><a href="/dashboard/prepaymentscreen">Pay</a></li>
+                            <li><a href="/agenda">Agenda</a></li>
+                            <li class="active"><a href="/student-search">Student Search</a></li>
+                        </ul> 
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="span3">
+                        <h2 class="title"><span>Apply a filter</span></h2>
+                        <form id="ajax-contact-form" method="post" action="/student-search/" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+                        {% csrf_token %}
+                            <div class="fieldWrapper">
+                                <section id="gridSystem">
+                                    <!-- Display each form. The as_p method wraps each element in a paragraph
+                                         (<p>) element. This ensures each element appears on a new line,
+                                         making everything look neater. -->
+                                    <div class= "inner-filter">
+                                {% for field in student_search_form %}
+                                    
+                          
+                                        <div id="formlabel">
+                                        {{field.errors}}
+                                        {{field.label}}
+                                        </div>
+                                        <div class="search">
+                                        {{field}}
+                                        </div>
+
+                                        {% endfor %}
+                                    </div>
+                                    <div class="buffer">                                    
+                                    <input class="btn btn-default plusbuffer" type="submit" name="submit" value="Apply filter" /> 
+                                    </div>
+                                </section>
+                            </div>
+                        </form>
+                                                 
+                    </div>
+                    <div class="span9">
+                        <div class="row">
+                            <div class="span3">
+                               <h2 class="title"><span>Registered Students</span></h2>                         
+                            </div>
+                            <div class="span6">
+                                <div class="pagination">
+                                    <span class="step-links">
+                                        {% if query_results.has_previous %}
+                                            <a href="?page={{ query_results.previous_page_number }}"> <<< </a>
+                                        {% else %}
+                                            <span id="butimarecruiter"> <<<</span>
+                                        {% endif %}
+
+                                        <span class="current">
+                                            Page {{ query_results.number }} of {{ query_results.paginator.num_pages }}
+                                        </span>
+
+                                        {% if query_results.has_next %}
+                                            <a href="?page={{ query_results.next_page_number }}">  >>> </a>
+                                        {% else %}
+                                            <span id="butimarecruiter"> >>> </span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                            <table class="table table-striped table-bordered table-condensed">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Grade</th>
+                                    <th>Major</th>
+                                    <th>Minor</th>
+                                    <th>GPA</th>
+                                </tr>
+                                {% for student in query_results %}
+                                <tr class="comp_line" onclick="location.href='/student-slug/{{student.id}}.html'">
+                                    <td><a style="display:block;" href='/student-slug/{{student.id}}.html'>{{ student.user.first_name }} {{ student.user.last_name }}</a></td>
+                                    <td> 
+                                    {% for grade in student.grade_level %}{{grade}}{% endfor %}
+                                    </td>
+                                    <td>{% for maj in student.major %}{{maj}}{% if not forloop.last %}, {% endif %}{% endfor %} </td>
+                                    <td>{% for min in student.minor%}{{min}}{% endfor %}</td>
+                                    <td>{{ student.GPA }}</td>
+                                </tr>
+                                {% endfor %}
+      
+                            </table>
+                    </div>
+                </div>
+            </section>
+            </div>
+        </div>
+    </div>
+</div>  
+{% endblock %}

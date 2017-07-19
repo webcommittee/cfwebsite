@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                <section>
+                	<div class="row">
+                    	<div class="span1">
+                        </div>
+                        <div class="span9">
+                        	<h2 class="title"><span>
+                            {% editable page.pricingpage.heading %} 
+                            {{page.pricingpage.heading}}
+                            {% endeditable %}</span></h2> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span1">
+                        </div>
+                        <div class="span9">
+                            {% editable page.pricingpage.pricing_info %}
+                            {{page.pricingpage.pricing_info|richtext_filters|safe}}
+                            {% endeditable %}
+                        </div>                            
+                	</div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}

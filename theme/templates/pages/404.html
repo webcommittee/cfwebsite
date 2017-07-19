@@ -1,0 +1,33 @@
+
+ <!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+ {% block all_content %}
+
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer">
+                </div>
+                <div class="row">
+                	<div class="span5">
+                	</div>
+                    <h2 class="title">Welcome to 404.html</h2>
+                    <div class="span5"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span5">
+                    </div>
+                    <h2 class="title">Nothing is here, friend.</h2>
+                    <div class="span5"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% endblock %}

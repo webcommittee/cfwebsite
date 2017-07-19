@@ -1,0 +1,68 @@
+{% load i18n pages_tags %}
+{% spaceless %}
+{% if page_branch_in_menu %}
+
+<nav id="main_menu">
+  <div class="menu_wrap">
+      <ul class="nav sf-menu">
+        {% for page in page_branch %}
+          {% if not has_home and page.is_primary and forloop.first %}
+            <li{% if on_home %} class="current"{% endif %} id="dropdown-menu-home">
+                <a href="{% url "home" %}">{% trans "Home" %}</a>
+            </li>
+          {% endif %}
+          {% if page.in_menu %}
+              {% if page.title == "Register" and not user.is_authenticated %}
+                <li class="{% if page.has_children_in_menu %}sub-menu{% endif %}
+                   {% if page.is_current_or_ascendant %}current{% endif %}"
+                id="{{ page.html_id }}">
+                <a href="{{ page.get_absolute_url }}"
+                {% if page.has_children_in_menu %}
+                class="dropdown-toggle disabled" data-toggle="dropdown"
+                {% endif %}>
+                {{ page.title }}
+                {% if page.has_children_in_menu %}<b class="caret"></b><ul>{% for p in page.children.all %}<li><a href="{{p.get_absolute_url}}"><span>-</span>{{p.title}}</li></a>{% endfor %}</ul>{% endif %}
+                </a>
+              {% elif page.title == "Dashboard" and user.is_authenticated%}
+                <li class="{% if page.has_children_in_menu %}sub-menu{% endif %}
+                   {% if page.is_current_or_ascendant %}current{% endif %}"
+                id="{{ page.html_id }}">
+                <a href="{{ page.get_absolute_url }}"
+                {% if page.has_children_in_menu %}
+                class="dropdown-toggle disabled" data-toggle="dropdown"
+                {% endif %}>
+                {{ page.title }}
+                {% if user.is_staff or user.companyprofile %}
+                  {% if page.has_children_in_menu %}<b class="caret"></b>
+                    {% if page.has_children_in_menu %}<ul>{% for p in page.children.all %}<li><a href="{{p.get_absolute_url}}"><span>-</span>{{p.title}}</li></a>{% endfor %}</ul>{% endif %}
+                  {% endif %}
+                {% endif %}
+              {% elif page.title != "Register" and page.title != "Dashboard" %}
+                <li class="{% if page.has_children_in_menu %}sub-menu{% endif %}
+                   {% if page.is_current_or_ascendant %}current{% endif %}"
+                id="{{ page.html_id }}">
+                <a href="{{ page.get_absolute_url }}"
+                {% if page.has_children_in_menu %}
+                class="dropdown-toggle disabled" data-toggle="dropdown"
+                {% endif %}>
+                {{ page.title }}
+               {% if page.has_children_in_menu %}<b class="caret"></b>
+                {% if page.has_children_in_menu %}<ul>{% for p in page.children.all %}<li><a href="{{p.get_absolute_url}}"><span>-</span>{{p.title}}</li></a>{% endfor %}</ul>{% endif %}
+              {% endif %}
+              {% endif %}
+               </li>
+      {% endif %}
+      {% endfor %}
+      {% if user.is_authenticated %}
+      <li><a href="/logout">Logout</a></li>
+      {% else %}
+      <!-- as long as the href goes to login, the view associated with login works -->
+      <li><a data-toggle="modal" href="{% url 'login' %}" data-target="#form-modal">Login</a></li>
+      {% endif %}
+
+      </ul>
+  </div>
+</nav>  
+
+{% endif %}
+{% endspaceless %}

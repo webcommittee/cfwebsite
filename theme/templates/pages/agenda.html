@@ -1,0 +1,61 @@
+    <!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    {% block all_content %}
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                <section>
+                {% if user.companyprofile %}
+                    <div class="row">
+                         <div class="span1"> 
+                        </div>
+                        <div class="span8">
+                            <ul class="nav nav-tabs">
+                                <li><a href="/dashboard">Dashboard</a></li>
+                                <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                <li><a href="/dashboard/prepaymentscreen">Pay</a></li>
+                                <li class="active"><a href="/agenda">Agenda</a></li>
+                                <li><a href="/student-search">Student Search</a></li>
+                            </ul> 
+                        </div>
+                    </div>      
+                {% endif %}
+                	<div class="row">
+                    	<div class="span1"> 
+                        </div>
+                    	<div class="span9">
+                        {% editable page.agendapage.heading %}
+                        <h1 class="title">{{page.agendapage.heading}}</h1>
+                        {% endeditable %}
+                        </div>                	
+                	</div>
+                    <div class="row">
+                        <div class="span1"> 
+                        </div>
+                        <div class="span5">
+                        {% editable page.agendapage.friday %}
+                        <h2>Friday</h2>
+                        {{page.agendapage.friday|richtext_filters|safe}}
+                        {% endeditable %}
+                        </div>
+                        <div class="span1"></div>
+                        <div class="span5">
+                        {% editable page.agendapage.saturday %}
+                        <h2>Saturday</h2>
+                        {{page.agendapage.saturday|richtext_filters|safe}}
+                        {% endeditable %}   
+                        </div>
+                    </div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    {% endblock %}

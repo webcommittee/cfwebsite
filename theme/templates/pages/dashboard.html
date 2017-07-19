@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+    <script type="text/javascript">
+        var price = 500; //price
+        $(document).ready(function() {
+            var $cart = $('#selected-seats'), //Sitting Area
+            $counter = $('#counter'), //Votes
+            $total = $('#total'); //Total money
+            $warning = $('#warning');
+            var day = "friday";
+            var user_selection = [];
+            
+            var sc = $('#seat-map').seatCharts({
+                map: [  //Seating chart
+                    '__________________________',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '______aaaaaaaaaaaaaa______',
+                ],
+                naming : {
+                    top : false,
+                    getLabel : function (character, row, column) {
+                        return column;
+                    }
+                },
+                legend : { //Definition legend
+                    node : $('#legend'),
+                    items : [
+                        [ 'a', 'available',   'You' ],
+                        [ 'a', 'unavailable', 'Vacant'],
+                        [ 'a', 'selected' , 'Occupied']
+                    ]                   
+                },
+                
+                click: function () { //Click event
+                    $warning.text("");
+                    if (this.status() == 'selected') { //Checked
+                        //Update Number
+                        //optional
+                        return 'selected';
+                    } else if (this.status() == 'available') { //optional seat             
+                        return 'available';
+                    } else if (this.status() == 'unavailable') { //sold
+                        return 'unavailable';
+                    } else {
+                        return this.style();
+                    }
+                }
+                
+            });
+            //sold seat
+            sc.find('available').status('unavailable');
+
+            $.ajax({
+                type     : 'get',
+                url      : '/bookings/get/'+day+'/',
+                dataType : 'json',
+                success  : function(response) {
+                    $.each(response.bookings, function(index, booking) {
+                        //find seat by id and set its status to unavailable
+                        sc.status(booking.seat_id, 'selected');
+                    });
+                }
+            });
+
+            function getCookie(c_name)
+                {
+                    if (document.cookie.length > 0)
+                    {
+                        c_start = document.cookie.indexOf(c_name + "=");
+                        if (c_start != -1)
+                        {
+                            c_start = c_start + c_name.length + 1;
+                            c_end = document.cookie.indexOf(";", c_start);
+                            if (c_end == -1) c_end = document.cookie.length;
+                            return unescape(document.cookie.substring(c_start,c_end));
+                        }
+                    }
+                 return "";
+                }
+
+
+            $("#friday-toggle").click(function(){
+                day="friday";
+                sc.find('available').status('unavailable');
+                sc.find('selected').status('unavailable');
+                refreshData();
+            });
+
+            $("#saturday-toggle").click(function(){
+                day="saturday";
+                sc.find('available').status('unavailable');
+                sc.find('selected').status('unavailable');
+                refreshData();
+            });
+
+            function refreshData(){
+                    $.ajax({
+                    type     : 'get',
+                    url      : '/bookings/get_company/'+"{{user.id}}"+'/'+day+'/',
+                    dataType : 'json',
+                    success  : function(response) {
+                        //iterate through all bookings for our event 
+                        $.each(response.others, function(index, other) {
+                            //find seats reserved by people other than the
+                            // specified company by id and set its status to selected
+                            sc.status(other.seat_id, 'selected');
+                        });
+
+                        $.each(response.bookings, function(index, booking) {
+                            //find seat by id and set its status to unavailable
+                            sc.status(booking.seat_id, 'available');
+                        });
+                    }
+                });
+            }
+            refreshData();
+        });
+    </script>
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer"></div>
+                <section>
+                    <div class="row">
+                        <div class="span3">
+                            {% if user.companyprofile %}
+                            <h3 class="title"><span>Your company profile</span></h3>                     
+                            {% else %}
+                            <h3 class="title"><span>Your student profile</span></h3> 
+                            {% endif %}
+                        </div>
+
+                        <div class="span7">   
+                            <h3 class="title">{% if user.companyprofile %} 
+                            {{user.companyprofile.company}}</h3></div>
+                            {% else %} 
+                            {{user.first_name}} {{user.last_name}}</h3></div>
+                            {% endif %}         
+                        
+                    </div>
+                    <div class="row">
+                        <div class="span3">
+                            {% if user.companyprofile %}
+                                <img class="compicon img-border" src="{{MEDIA_URL}}{{user.companyprofile.logo}}"/>
+
+                                    {% if user.companyprofile.company_bio %}
+                                    <h3>Bio</h3>
+                                        {{user.companyprofile.company_bio}}
+                                    {% endif %}
+                                    
+                                    <h3>Days attending</h3>
+                                    <span>{% for day in user.companyprofile.days_attending %}{{day}}<br> {% endfor %}</span>
+                                
+                                    <h3>Majors wanted</h3>
+                                    <span>{% for major in user.companyprofile.majors_wanted %}{{major}}<br> {% endfor %}</span>
+                                    <h3>Grade levels wanted</h3>
+                                    <span>{% for grade in user.companyprofile.grade_level_wanted %}{{grade}}<br> {% endfor %}</span>
+                                    <h3>Contact</h3>
+                                    <span>{{user.companyprofile.phone_number}}</span><br>
+                                    <span>{{user.companyprofile.public_email}}</span>
+
+                                    {% if user.companyprofile.tables %}
+                                    <h3>Tables:</h3> 
+                                    <span> You are requesting {{user.companyprofile.friday_number_of_tables}} table{%if user.companyprofile.friday_number_of_tables != 1%}s{% endif %} on friday and {{user.companyprofile.saturday_number_of_tables}} table{% if user.companyprofile.saturday_number_of_tables != 1 %}s{% endif %} on Saturday.</span>
+                                    <br>
+                                    <span> You have been assigned the following tables: <br> </span>
+                                    {% for table in user.companyprofile.friday_tables %} {{table}} {% endfor %}
+                                    {% for table in user.companyprofile.saturday_tables %} {{table}} {% endfor %}
+                                    {% endif %}
+                            {% else %}
+                                <img class="img-border" src="{{MEDIA_URL}}{{user.studentprofile.picture}}"/>
+                                <h3>Major(s)</h3>
+                                <span>{% for m in user.studentprofile.major %}{{m}} {% endfor %}</span>
+                                <h3>Grade level</h3>
+                                <span>{% for g in user.studentprofile.grade_level %}{{g}} {% endfor %}</span>
+                                {% if user.studentprofile.GPA %}
+                                    <h3>GPA</h3>
+                                    {{user.studentprofile.GPA}}
+                                {% endif %}
+                                <h3>Hometown</h3>
+                                <span>{{user.studentprofile.hometown}}</span>
+                                <h3>Open to relocation</h3>
+                                <span>{% if user.studentprofile.open_to_relocation %}Yes{% else %}No{% endif %}</span>
+                                {% if user.studentprofile.website %}
+                                    <h3>Website</h3>
+                                    {{user.studentprofile.website}}
+                                {% endif %}
+                                <h3>Contact Info </h3>
+                                {% if user.studentprofile.phone_number %}
+                                <span>Phone Number: {{user.studentprofile.phone_number}}<br></span>
+                                {% endif %}
+                                <span>Email: {{user.email}}</span>
+				<h3>Bio</h3>
+				{{user.studentprofile.bio}}
+                            {% endif %}
+                        </div> 
+                        <div class="span9">
+                        {% if user.companyprofile %}
+                            <div class="row">
+                                <div class="span9">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a data-toggle="tab" href="/dashboard">Dashboard</a></li>
+                                        <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                        <li><a href="/dashboard/prepaymentscreen">Pay</a></li>
+                                        <li><a href="/agenda">Agenda</a></li>
+                                        <li><a href="/student-search">Student Search</a></li>
+                                    </ul>    
+                                </div>
+                            </div>
+                            {% if not user.companyprofile.has_submitted_payment %}
+                            <div class="row">
+                                <div class="span9">
+                                    <div class="alert alert-danger center-info"><h2 class="title"><a href="/dashboard/prepaymentscreen">NOTE: You have not submitted your payment yet! Click here to submit your payment.</a></h2></div>
+                                </div>
+                            </div>
+			    {% else %}
+			    <div class="row">
+				<div class="span9">
+				    <div class="alert alert-success">
+ 					We have successfully recieved your payment.	
+				    </div>
+				</div>
+			    </div>
+                            {% endif %}
+                            <div class="row">
+                                <div class="span3">
+                                    <h3>Interview rooms</h3>
+                                    {% if user.companyprofile.interview_rooms_friday or user.companyprofile.interview_rooms_saturday %}
+                                    <div class="alert alert-info">
+                                        <h4 class="center-info">The career fair staff will contact you with specific reservation information after your request has been processed.</h4> 
+                                    
+                                    </div>
+                                   {% endif %}
+				   {% if user.companyprofile.interview_rooms_friday %}
+                                    Friday, 9/30: You are requesting <b>{{user.companyprofile.interview_rooms_friday}}</b> room{% if user.companyprofile.interview_rooms_friday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_friday_from}}</b> to <b>{{user.companyprofile.interview_friday_to}}</b>
+                                    <br>
+                                    <br>
+                                    {% endif %}
+                                    {% if user.companyprofile.interview_rooms_saturday %}
+                                    Saturday, 10/1: You are requesting <b>{{user.companyprofile.interview_rooms_saturday}}</b> room{% if user.companyprofile.interview_rooms_saturday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_saturday_from}}</b> to <b>{{user.companyprofile.interview_saturday_to}}</b>
+                                    {% endif %}<br><br><br>
+                                    <h3>Representatives ({{user.companyprofile.number_of_representatives}})</h3>
+                                    {% for rep in user.companyprofile.reps.all %} {% if rep.is_alumni %} ** {% endif %} {{rep}}<br> {% endfor %}                                    
+                                    <h3>Sponsorship information</h3>
+				    {% if user.companyprofile.sponsor %}
+					You have chosen the <a href="/sponsor">{{user.companyprofile.sponsor}}</a> package.
+				    {% else %}
+					<p>You have not chosen any sponsorship packages.  <a href="/sponsor">(more info)</a></p>
+				   {% endif %}
+					 {% if user.companyprofile.sponsorshipitem.all %}
+					<p>You have chosen the following sponsorship items: </p>
+					{% for item in user.companyprofile.sponsorshipitem.all %}<p>{{item.name}}</p>{% endfor %}
+					{% endif %}
+				</div>
+                                <div class="span5">
+                                    <div class="row">
+                                        <div class="span2">
+                                        </div>
+                                        <div class="span3">
+                                            <h3>Table assignment</h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span6">
+                                           <ul class="nav nav-tabs">
+                                                <li id="friday-toggle"class="active"><a data-toggle="tab" href="#friday">Friday</a></li>
+                                                <li id="saturday-toggle"><a data-toggle="tab" href="#saturday">Saturday</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="span6">
+                                            <div class="alert alert-info">
+                                                <h4 class="center-info">The map below indicates your tentative table assignment.  It will be shown on your profile so students know where to find you the day of the career fair.  </h4>  
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                      
+                                        <div class="span3">
+                                            <div id="legend" class="dashboard"></div>
+                                        </div>
+                                    </div>                                    
+                                    <div class="row">
+                                        <div class="span3"></div>
+                                        <div class="span5">
+                                            <div class="demo">
+                                                <div id="seat-map" class="dashboard">
+                                                    <div class="front" class="dashboard">ARMORY ENTRANCE</div>                 
+                                                 </div>       
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                        <div class="row">
+                            <div class="span9">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="/dashboard">Dashboard</a></li>
+                                    <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                    <!-- <li><a href="/volunteer">Volunteer</a></li> -->
+                                    <li><a href="/company-search">Company Search</a></li>
+                                </ul>    
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="span9">
+				<div class="alert alert-info">
+                                <h3 class="center-info">This is the information companies will receive about you when they conduct searches. Be sure to edit your profile if anything looks incorrect.</h3>  
+                                </div>
+			    </div>
+                        </div>
+                        <div class="row">
+                            <div class="span9">
+                                <h3>Resume</h3>
+                                {% if user.studentprofile.resume %}
+                                    <embed src="{{MEDIA_URL}}{{user.studentprofile.resume}}" width="870" height="1200" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                                    {% else %}
+                                    Looks like you didn't want to upload one
+                                    {% endif %}
+                        
+                            </div>
+                        {% endif %}
+                    </div>               
+                </section>
+                
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}

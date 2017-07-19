@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+    <!--page_container-->
+    {% block all_content %}
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                <section>
+                	<div class="row">
+                        <div class="span2"></div>
+                        <div class="span8">
+                            <ul class="nav nav-tabs">
+                                <li><a href="/dashboard">Dashboard</a></li>
+                                <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                <li class="active"><a href="/dashboard/prepaymentscreen">Pay</a></li>
+                                <li ><a href="/agenda">Agenda</a></li>
+                                <li><a href="/student-search">Student Search</a></li>
+                            </ul>
+                        </div>  
+                    </div>
+                    <div class="row">
+                    	<div class="span2"></div>
+                    	<div class="span8">   
+                            <h1 class="title">Prepayment screen for {{user.companyprofile.company}}</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h4 class="alert center-info">Make sure the following information is correct, as we use this information to calculate the bill on your invoice. Apply updates if needed.  Once you pay your invoice, you will appear in our search results, be assigned a table, and have access to the student search form.</h4>
+                        </div>              	
+                	</div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>Company Name</h1>
+                            <p class="confirm-item">{{user.companyprofile.company}}</h3> </span>
+                        </div>
+                    </div>
+                    <div id="ruben_buffer"></div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>Days Attending <span id="butimarecruiter">(Friday: ${{paypal.friday_price}};  Saturday:  ${{paypal.saturday_price}}; Weekend: ${{paypal.weekend_price}} )</span></h2>
+                            {% for day in user.companyprofile.days_attending %}
+                            <p class="confirm-item">{{day}}<br></h4>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div id="ruben_buffer"></div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>Representatives ({{user.companyprofile.number_of_representatives}})<span id="butimarecruiter">(${{paypal.price_per_rep}} per rep per day beyond the first two)</span></h2>
+			{% for rep in user.companyprofile.reps.all %}
+			{{rep.rep}}<br>
+			{% endfor %}
+                        </div>
+                        <div class="span2">
+                        </div>
+                    </div>
+                    <div id="ruben_buffer"></div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>Number of tables requesting:  <span id="butimarecruiter">(${{paypal.price_per_table}} per table per day beyond the first)</span></h2>
+                            Friday: {{user.companyprofile.friday_number_of_tables}}<br>
+			    Saturday: {{user.companyprofile.saturday_number_of_tables}}<br>
+                        </div>
+                    </div>
+                            {% if user.companyprofile.sponsor %}
+                    <div id="ruben_buffer"></div>
+                   <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>You are choosing to sponsor the career fair.</h2>
+                            you have chosen the <b><a href="/sponsor">{{user.companyprofile.sponsor}}</a></b> sponsorship.
+                        </div>
+                    </div>
+                            {% endif %}
+                            {% if user.companyprofile.sponsorshipitem %}
+                    <div id="ruben_buffer"></div>
+                   <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2>You have chosen the following sponsorship items.</h2>
+                            {% for item in user.companyprofile.sponsorshipitem.all %}{{item}}<br> {% endfor %}
+                        </div>
+                    </div>
+                    <div id="ruben_buffer"></div>
+		   <div class="row">
+			<div class="span2">
+			</div>
+			<div class="span8">
+				<h2>Total:</h2>
+				<span><p>${{user.companyprofile.total_bill}}</p></span>
+			</div>
+		   </div>
+                    <div id="ruben_buffer"></div>
+                            {% endif %}
+                    <div id="ruben_buffer"></div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span6">
+                            <div class="btn btn-default plusbuffer"><a href="/dashboard/edit_profile">something is wrong. i want to go back and edit my profile.</a></div>
+                        </div>
+                    </div>
+                    <div id="ruben_buffer"></div>
+                    <div id="ruben_buffer"></div>
+                    <div id="ruben_buffer"></div>
+                    <div class="row">
+                        <div class="span2">
+                        </div>
+                        <div class="span8">
+                            <h2 class="title">If all this information is correct, proceed to paypal.</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span5"></div>
+                        <div class="span2">
+                            {{ form.render }}
+                        </div>
+
+                    </div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}

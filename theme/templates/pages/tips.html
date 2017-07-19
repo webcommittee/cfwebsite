@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+{% block all_content %}
+
+
+ <!--page_container-->
+    <div class="page_container">
+
+    	<div class="wrap">
+        	<div class="container">
+                <div id="ruben_buffer">
+                    <section>
+			<div class="row">
+			    {{page.tippage.heading}}
+			</div>
+
+			{{page.tippage.body|richtext_filters|safe}}	
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% editable_loader %}
+    {% endblock %}

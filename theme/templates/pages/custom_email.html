@@ -1,0 +1,114 @@
+{% load mathfilters %}
+{{page_type.email_message}}
+<head>
+	<style>
+	td {padding:10px,7px,10px,7px; font-size: 19px;}
+	</style>
+</head>
+<body style="background-color:#F0F0F0;font-family:'Open Sans',sans-serif;width:700px">
+<img src='cid:header.png' height="200", width="700"/>
+<p style="text-align:center;font-size:17pt;font-weight:500;">Here is your invoice.<br><br>
+ You may either pay it by check:<br/>Address to:<b>NSBE/SHPE Career Fair</b><br> Memo:<b>39th Annual NSBE/SHPE Career Fair</b><br/> Mail to:<b>NSBE/SHPE Career Fair, 1999 Burdett Ave, Troy, NY, 12180</b><br><br>or by going to  <a href=rpicareerfair.org/dashboard/prepaymentscreen>rpicareerfair.org/dashboard/prepaymentscreen</a>
+</p>
+<br>
+<table border="solid">
+{% if "Friday" in company.days_attending and "Saturday" in company.days_attending %}
+<tr>
+<th>WEEKEND BASE FEE</th>
+<th>$1050</th>
+<th>x1</th>
+</tr>
+
+<tr><td>Registration Fee</td> <td>$470.00</td> <td>x1</td></tr>
+<tr><td>One Table for each day</td> <td>$125.00</td> <td>x2</td></tr>
+<tr><td>Two Corporate Representatives each day</td> <td>$200.00</td> <td>x2</td></tr>
+<tr><td>Corporate Representative Breakfast <td>(Included)</td> <td></td></tr>
+<tr><td>Corporate Representative Lunch <td>(Included)</td> <td></td></tr>
+<tr><td>Weekend discount</td> -$70</td> <td></td></tr>
+<tr> </tr>
+<tr> </tr>
+<tr> </tr>
+<tr> </tr>
+{% if company.friday_number_of_tables > 1 %}
+<tr><td>Additional Friday tables</td> <td>${{company.friday_number_of_tables|sub:1|mul:paypal_info.price_per_table}}</td> <td>x{{company.friday_number_of_tables|sub:1}}</td></tr>
+{% endif %}
+
+{% if company.friday_representatives.all|length > 2 %}
+<tr><td>Additional Friday reps</td>  <td>${{company.friday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}}</td><td>x{{company.friday_representatives.all|length}}</td></tr>
+{% endif %}
+
+{% if company.saturday_number_of_tables > 1 %}
+<tr><td>Additional Saturday tables</td><td>${{company.saturday_number_of_tables|sub:1|mul:paypal_info.price_per_table}}</td><td>x{{company.saturday_number_of_tables|sub:1}}</td></tr>
+{% endif %}
+
+{% if company.saturday_representatives.all|length > 2 %}
+<tr><td>Additional Saturday reps</td><td>${{company.saturday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}}</td><td>x{{company.saturday_representatives.all|length}}</td></tr>
+{% endif %}
+</table>
+{% elif "Friday" in company.days_attending %}
+<tr>
+<th>FRIDAY BASE FEE</th>
+<th>$560</th>
+<th>x1</th>
+</tr>
+<tr><td>Registration Fee</td> <td>$235.00</td> <td>x1</td></tr>
+<tr><td>One Table</td> <td>$125.00</td> <td>x1</td></tr>
+<tr><td>Two Corporate Representatives</td> <td>$200.00</td> <td>x1</td></tr>
+<tr><td>Corporate Representative Breakfast <td>(Included)</td> <td></td></tr>
+<tr><td>Corporate Representative Lunch <td>(Included)</td> <td></td></tr>
+<tr> </tr>
+<tr> </tr>
+<tr> </tr>
+<tr> </tr>
+{% if company.friday_number_of_tables > 1 %}
+<tr><td>Additional friday tables</td> <td>${{company.friday_number_of_tables|sub:1|mul:paypal_info.price_per_table}}</td> <td>x{{company.friday_number_of_tables|sub:1}}</td></tr>
+{% endif %}
+
+{% if company.friday_representatives.all|length > 2 %}
+<tr><td>Additional friday reps</td><td>${{company.friday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}}</td> <td>x{{company.friday_representatives.all|length}}</td> </tr>
+{% endif %}
+</table>
+{% elif "Saturday" in company.days_attending %}        
+<tr>
+<th>SATURDAY BASE FEE</th>
+<th>$560</th>
+<th>x1</th>
+</tr>
+<tr><td>Registration Fee</td> <td>$235.00</td> <td>x1</td></tr>
+<tr><td>One Table</td> <td>$125.00</td> <td>x1</td></tr>
+<tr><td>Two Corporate Representatives</td> <td>$200.00</td> <td>x1</td></tr>
+<tr><td>Corporate Representative Breakfast <td>(Included)</td> <td></td></tr>
+<tr><td>Corporate Representative Lunch <td>(Included)</td> <td></td></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+<tr></tr>
+{% if company.saturday_number_of_tables > 1 %}
+<tr><td>Additional Saturday tables</td> <td>${{company.saturday_number_of_tables|sub:1|mul:paypal_info.price_per_table}}</td> <td>x{{company.saturday_number_of_tables|sub:1}}</td></tr>
+{% endif %}
+
+{% if company.saturday_representatives.all|length > 2 %}
+<tr><td>Additional Saturday reps</td> <td>${{company.saturday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}}</td><td>x{{company.saturday_representatives.all|length}}</td> </tr>
+{% endif %}
+</table>
+{% endif %}
+<table border="solid">
+{% if company.sponsor %}
+<tr><th>{{sponsor.title}}</th><th>{{sponsor.price}}</th><th></th></tr>
+	{% if sponsor.num_free_tables %}
+	<tr><td>Free table</td><td>x{{sponsor.num_free_tables}}</td><td>-${{sponsor.num_free_tables|mul:paypal_info.price_per_table}}</td></tr>
+	{% endif %}
+	{% if sponsor.num_free_reps %}
+	<tr><td>Free representative</td><td>x{{sponsor.num_free_reps}}</td><td>-${{sponsor.num_free_reps|mul:paypal_info.price_per_rep}}</td></tr>
+	{% endif %}
+{% endif %}
+
+{% if company.sponsorshipitem %}
+	{% for item in company.sponsorshipiem.all %}
+		<tr><td>{{item.name}}</td><td>{{item.price}}</td><td></td></tr>
+	{% endfor %}
+{% endif %}
+</table>
+TOTAL:  ${{company.total_bill}}
+<br>
+<a href="rpicareerfair.org/dashboard/prepaymentscreen">Pay this invoice now</a>

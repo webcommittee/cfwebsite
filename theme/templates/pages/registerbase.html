@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                {% if request.GET.sent %}
+                    {% editable page.form.response %}
+                    {{ page.form.response|richtext_filters|safe }}
+                    {% endeditable %}
+                {% else %}
+                     {% errors_for form %}
+                <section>
+                	<div class="row">
+                    	<div class="span3">
+                        	<h2 class="title"><span>Register</span></h2>
+                            <div id="map"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1742.6681872580073!2d-73.67857585003959!3d42.72897845125704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0000000000000000%3A0x9e1c4b2be3341fcd!2sAlumni+Sports+and+Recreation+Center!5e0!3m2!1sen!2sus!4v1463977434055" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+                            <p>Alumni Sports and Recreation Center</p>
+                            <p>110 8th St<br/>Troy, NY, 12180<br/>Rensselaer Polytechnic Institute</a><br/><!-- Some phone # here--></a></p>                           
+                        </div>
+                    	<div class="span8">
+                            {% block registration_content %}{% endblock %}    
+                        </div>                	
+                	</div>
+                </section>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+$(function() {$('.mezzanine-form :input:visible:enabled:first').focus();});
+</script>
+{% editable_loader %}
+{% endblock %}
+
+

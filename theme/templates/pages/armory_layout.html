@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n staticfiles %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+    <head>
+        <script type="text/javascript"> 
+
+$(document).ready(function() {
+    var $cart = $('#selected-seats'); //Table Area
+    $counter = $('#counter');
+    $warning = $('#warning');
+    var seats_to_reset = [];
+    var day = "friday";
+    var selected = null;
+
+    console.log("hhello");
+    var sc_saturday = $('#seat-map-saturday').seatCharts({
+	map: [
+		'_________________________',
+		'____aaa___________aaa____',
+		'___a___a_________a___a___',
+		'___a___a_________a___a___',
+		'___a___a_________a___a___',
+		'____aaa___________aaa____',
+		'_________________________',
+		'_a_____________________a_',
+		'_a_____________________a_',
+		'_a_________aaa_________a_',
+		'_a________a___a________a_',
+		'_a________a___a________a_',
+		'_a________a___a________a_',
+		'_a_________aaa_________a_',
+		'_a_____________________a_',
+		'_a_____________________a_',
+		'_________________________',
+		'____aaa___________aaa____',
+		'___a___a_________a___a___',
+		'___a___a_________a___a___',
+		'___a___a_________a___a___',
+		'____aaa___________aaa____',
+		'_________________________',
+	],
+	naming: {	
+            top : false,
+            getLabel : function (character, row, column) {
+                return column;
+	    },
+	    getId : function(character, row, column){
+	    	return this.rows.indexOf(row)+'_'+column;
+	    },
+	    columns: ["1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48"],
+	    rows : ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB','CC','DD','EE','FF','GG','HH','II','JJ','KK','LL','MM','NN','OO','PP']
+        
+        },
+	
+        click: function () { //Click event
+            "{% if user.is_staff %}";
+            $warning.text("");
+            if (this.status() == 'available') {
+                //Delete reservation
+                $('#cart-item-'+this.settings.id).remove();
+                return 'unavailable';
+            } else if (sc_saturday.find('available').length === 4 ){
+                $warning.text("Wtf no, you can't reserve more than four tables for one company.");
+                return this.style();
+            } else if (this.status() == 'unavailable') {
+                $('<li>R'+(this.settings.row+1)+' S'+this.settings.label+'</li>')
+                    .attr('id', 'cart-item-'+this.settings.id)
+                    .data('seatId', this.settings.id)
+                    .appendTo($cart);
+
+                $counter.text(sc_saturday.find('available').length+1);
+                            
+                return 'available';
+            } else if (this.status() == 'selected') { //unselect
+                return 'selected';
+            } else {
+                return this.style();
+            }
+
+            "{% else %}"; //Don't let the unauthorized user do anything
+            if (this.status() == 'selected') { 
+                return 'selected';
+            } else if (this.status() == 'available') {            
+                return 'available';
+            } else if (this.status() == 'unavailable') { 
+                return 'unavailable';
+            } else {
+                return this.style();
+            }
+            "{% endif %}";
+	}
+    });
+
+    var sc = $('#seat-map').seatCharts({
+        map: [  //Seating chart
+		'__________________________',
+		'_a______________________a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a______________________a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a______________________a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a__a___a_a____a_a___a__a_',
+		'_a___aaa___aaaa___aaa___a_',
+		'_a______________________a_',
+		'______aaaaaaaaaaaaaa______',
+	],
+
+        naming : {
+            top : false,
+            getLabel : function (character, row, column) {
+                return column;
+            },
+	    getId : function(character, row, column){
+	    	return this.rows.indexOf(row)+'_'+column;
+	    },
+	    columns: ["1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48"],
+	    rows : ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB','CC','DD','EE','FF','GG','HH','II','JJ','KK','LL','MM','NN','OO','PP']
+        },
+
+        legend : { //It's confusing, yes but don't fucking touch it.
+                   //by default, the colors are weird and unintiutive so
+                   //I'm changing it up
+            node : $('#legend'),
+            items : [
+                [ 'a', 'available',   'Company' ],
+                [ 'a', 'unavailable', 'Unoccupied'],
+                [ 'a', 'selected', 'Someone else']
+            ]                   
+        },
+
+        
+        click: function () { //Click event
+            "{% if user.is_staff %}";
+            $warning.text("");
+            if (this.status() == 'available') {
+                //Delete reservation
+                $('#cart-item-'+this.settings.id).remove();
+                return 'unavailable';
+            } else if (sc.find('available').length === 4 ){
+                $warning.text("Wtf no, you can't reserve more than four tables for one company.");
+                return this.style();
+            } else if (this.status() == 'unavailable') {
+                $('<li>R'+(this.settings.row+1)+' S'+this.settings.label+'</li>')
+                    .attr('id', 'cart-item-'+this.settings.id)
+                    .data('seatId', this.settings.id)
+                    .appendTo($cart);
+
+                $counter.text(sc.find('available').length+1);
+                            
+                return 'available';
+            } else if (this.status() == 'selected') { //unselect
+                return 'selected';
+            } else {
+                return this.style();
+            }
+
+            "{% else %}"; //Don't let the unauthorized user do anything
+            if (this.status() == 'selected') { 
+                return 'selected';
+            } else if (this.status() == 'available') {            
+                return 'available';
+            } else if (this.status() == 'unavailable') { 
+                return 'unavailable';
+            } else {
+                return this.style();
+            }
+            "{% endif %}";
+        }
+    });
+
+    sc.find('available').status('unavailable');
+    sc_saturday.find('available').status('unavailable');
+    $.ajax({
+        type     : 'get',
+        url      : '/bookings/get/'+day+'/',
+        dataType : 'json',
+        success  : function(response) {
+            var sce = null;
+	    if (day === "friday"){
+		sce = sc;
+	    }
+	    else {
+		sce = sc_saturday;
+	    }
+            $.each(response.bookings, function(index, booking) {
+                //find seat by id and set its status to unavailable
+                sce.status(booking.seat_id, 'selected');
+            });
+        }
+    });
+
+    function getCookie(c_name)
+        {
+            if (document.cookie.length > 0)
+            {
+                c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1)
+                {
+                    c_start = c_start + c_name.length + 1;
+                    c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) c_end = document.cookie.length;
+                    return unescape(document.cookie.substring(c_start,c_end));
+                }
+            }
+         return "";
+        }
+
+
+    $("#friday-toggle").click(function(){
+        day = "friday";
+        sc.find('available').status('unavailable');
+        sc.find('selected').status('unavailable');
+	sc_saturday.find('available').status('unavailable');
+	sc_saturday.find('selected').status('unavailable');
+	$("#seat-map").css('display', 'block');
+	$("#seat-map-saturday").css('display', 'none');
+        refreshData(selected);
+    });
+
+    $("#saturday-toggle").click(function(){
+        day = "saturday";
+        sc.find('available').status('unavailable');
+        sc.find('selected').status('unavailable');
+	sc_saturday.find('available').status('unavailable');
+	sc_saturday.find('selected').status('unavailable');
+	$("#seat-map-saturday").css('display', 'block');
+	$("#seat-map").css('display', 'none');
+        refreshData(selected);
+    });
+
+    $(".row.selectable").click(function(){
+        if (selected !== null){
+            $(selected).css("background-color",'');
+        }
+        selected = this;
+        $(selected).css("background-color","#B9DEA0");
+        refreshData(selected);
+        sc.find('available').status('unavailable');
+    });
+
+    function refreshData(div){
+            var sce = null;
+	    if (day === "friday"){
+		sce = sc;
+	    }
+	    else {
+		sce = sc_saturday;
+	    }
+            $.ajax({
+            type     : 'get',
+            url      : '/bookings/get_company/'+$(div).attr('id')+'/'+day+'/',
+            dataType : 'json',
+            success  : function(response) {
+                //iterate through all bookings for our event 
+                $.each(response.others, function(index, other) {
+                    //find seats reserved by people other than the
+                    // specified company by id and set its status to selected
+                    sce.status(other.seat_id, 'selected');
+                });
+
+                $.each(response.bookings, function(index, booking) {
+                    //find seat by id and set its status to unavailable
+                    sce.status(booking.seat_id, 'available');
+                });
+                $("#companyname").text(response.companyname);
+                if (response.logo){
+                    $("#logo").html("<img class=\"img-border\" src=\""+response.logo+"\"/>");
+                }
+                else {
+                    $("#logo").html();
+                }
+                if (response.bio){
+                    $("#company_bio").html("<h2>Bio</h2>"+response.company_bio);
+                }
+                else {
+                    $("#bio").html();
+                }
+                $("#days_attending").html("<h2>Days attending</h2>"+response.days_attending);
+                $("#majors_wanted").html("<h2>Majors hiring</h2>"+response.majors_wanted);
+                $("#grade_level_wanted").html("<h2>Grade levels hiring</h2>"+response.grade_level_wanted);
+                old_seats = sce.find('available').seatIds;
+            }
+        });
+    }
+
+    $("#table-submit").click(function(){
+            var sce = null;
+	    if (day === "friday"){
+		sce = sc;
+	    }
+	    else {
+		console.log("ok");
+		sce = sc_saturday;
+	    }
+	$.ajax({
+            headers: { "X-CSRFToken": getCookie("csrftoken")},
+            url: '/bookings/post_all/'+day+'/',
+            type: 'POST',
+            data: JSON.stringify({
+                "company" : $(selected).attr('id'),
+                "bookings" : sce.find('available').seatIds,
+                "to_delete": sce.find('unavailable').seatIds,
+            }),
+            dataType: 'json',
+            success: function() {
+                old_seats = sce.find('available').seatIds;
+                $warning.text("Changes submitted");
+            },
+            error: function() {
+                $warning.text("Something went wrong with the database...");
+            }
+        });
+    });  
+});
+	</script>
+    </head>
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer">
+                <section>
+                    <div class="row">
+                        <div class="span2">
+                            <h2 id="companyname">Click a company name to get started</h2>
+                        </div>
+                        <div class="span4">
+                            <h2 class="title company_list"><span>Company list</span></h2> 
+                        </div>
+                        <div class="span4">   
+                            <h2 class="title"><div id="armorylayout">Armory layout</div></h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span2 inner-filter2">
+                            <div id="logo"></div>
+                            <div id="bio"></div>
+                            <div id="days_attending"></div>
+                            <div id="majors_wanted"></div>
+                            <div id="grade_level_wanted"></div>
+                            <div id="application_website"></div>
+                        </div>
+                        <div class="span2" id="armory-container">
+                            {% for comp in company_list %}
+                            <div class="row selectable" id="{{comp.user.id}}">
+                                <div class="selectable">
+                                    <div class="span2">
+                                        <p>{{comp.company}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                             {% endfor %}
+                        </div>
+                        <div class="span6">
+                            <div class="row">
+                                <div class="span6">
+                                   <ul class="nav nav-tabs">
+                                        <li id="friday-toggle"class="active"><a data-toggle="tab" href="#friday">Friday</a></li>
+                                        <li id="saturday-toggle"><a data-toggle="tab" href="#saturday">Saturday</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="span3">
+                                    <div id="legend"></div>
+                                </div>
+                            </div>
+                            <div class="tab-content">
+                                <div id="friday" class="tab-pane fade in active">
+                                    <div class="row">
+                                        <div class="span6">
+                                            <h3>Friday</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="saturday" class="tab-pane fade">
+                                    <div class="row">
+                                        <div class="span6">
+                                            <h3>Saturday</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="demo">
+				<div id="seat-map-saturday" style="display: none;"></div>
+                                <div id="seat-map" style="display: block">
+                                </div>       
+                            </div>
+			
+                                   <div class="front">ARMORY ENTRANCE {% if user.is_staff %}  [PERMISSIONS: ADMIN] <br> You have permissions to alter this table.  Be careful! <br> Click a company on the left to select them, then click unavailable on an   y square on the graph to assign them a table, Hit submit to save your changes.{% endif %}</div>                 
+                        </div>
+                            {% if user.is_active and user.is_staff %}
+                            <div class="row">
+                                <div class="span2">
+                                </div>
+                                <div class="span2">
+                                    <div id="table-submit" class="btn btn-default btn-lg">Submit changes</div>
+                                </div>
+                                <div class="span2">
+                                    <div id="warning" ><h2 class="title"></h2></div>
+                                </div>
+                            </div>
+			    <div class="rubenbuffer"></div>
+                            <div class="row">
+                                <div class="span3">
+                                    <div id="legend"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                    </div>
+                        </div>                  
+                    </div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+$(function() {$('.mezzanine-form :input:visible:enabled:first').focus();});
+</script>
+{% editable_loader %}
+{% endblock %}
+
+

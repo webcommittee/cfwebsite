@@ -1,0 +1,14 @@
+You've received an invoice Hello {{company.user.email}}
+NSBE/SHPE Career Fair sent you an invoice for ${{company.total_bill}}
+
+Note from NSBE/SHPE Career FairTo pay via check, please follow these instructions:
+1. Address check to:
+NSBE/SHPE Career Fair
+2. Memo:
+38th Annual NSBE/SHPE Career Fair
+3. Mail check to:
+NSBE/SHPE Career Fair
+1999 Burdett Ave
+Troy, NY 12180
+
+View and Pay Invoice Sent to {{company.user.email}} Sent from NSBE/SHPE Career Fair treasury@careerfair.rpi.edu Amount ${{company.total_bill}}

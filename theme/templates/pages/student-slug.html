@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+
+    <script>
+    </script>
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer">
+                <section>
+                    <div class="row">
+                        <div class="span1">
+                        </div>
+                        <div class="span3">
+                            <h2 class='title' id="dontcenter">Student profile</h2> 
+                        </div>
+                        <div class="span6">
+                            <h2 class="title"><span>{{student_profile.user.first_name}} {{student_profile.user.last_name}}</span></h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="span1">
+                    </div>
+                    <div class="span3">
+                        <img class="img-border" src="{{MEDIA_URL}}{{student_profile.picture}}"/>
+                        <h3>Major(s)</h3>
+                        <span>{% for m in student_profile.major %}{{m}}{% endfor %}</span>
+                        {% if student_profile.minor %}
+                        <h3>Minor</h3>
+                        {% for m in student_profile.minor %}{{m}}{% endfor %}
+                        {% endif %}
+                        <h3>Grade level</h3>
+                        <span>{% for g in student_profile.grade_level %}{{g}}{% endfor %}</span>
+                        <h3>Hometown</h3>
+                        <span>{{student_profile.hometown}}</span>
+                        <h3>Contact Info </h3>
+                        <span>Phone Number: {{student_profile.phone_number}}<br></span>
+                        <span>Email: {{student_profile.user.email}}</span>
+			<h3>Bio</h3>
+			<span>{{student_profile.bio}}</span>
+                    </div>
+                        <div class="span5">
+                            <embed src="{{MEDIA_URL}}{{student_profile.resume}}" width="800" height="1000" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                        </div>
+                    </div>               
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}

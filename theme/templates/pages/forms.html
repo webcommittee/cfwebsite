@@ -1,0 +1,22 @@
+{% load mezzanine_tags i18n %}
+<div class="contact_form">  
+	<div id="note"></div>
+    <div id="fields">
+        <form id="ajax-contact-form" method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+        	{% csrf_token %}
+        	<div class="fieldWrapper">
+	            <!-- Display each form. The as_p method wraps each element in a paragraph
+	                 (<p>) element. This ensures each element appears on a new line,
+	                 making everything look neater. -->
+	            {{ user_form.as_p }}
+	            {{ profile_form.as_p }}
+
+		    </div>
+        <div class="form-actions">
+      		 <input class="btn btn-primary btn-lg" type="submit"
+          	  value="{% if page.form.button_text %}{{ page.form.button_text }}{% else %}{% trans "Submit" %}{% endif %}">
+   		 </div>
+        </form>
+    </div>
+</div> 
+{% editable_loader %}

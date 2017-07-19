@@ -1,0 +1,226 @@
+{% extends "pages/registerbase.html" %}
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+{% block registration_content %}
+<!-- Include formset plugin - including jQuery dependency -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	$('option').mousedown(function(e) {
+   		e.preventDefault();
+    	$(this).prop('selected', !$(this).prop('selected'));
+    return false;
+	});
+	$('.rep-formset').formset({
+        addText: 'Add representative',
+        deleteText: 'remove'
+    });
+});
+</script>
+<h2 class="title"><span>Company Registration</span>  <a href="/student-registration"><span id="butimarecruiter">   (<span id="nounderline">I'm a student</span>)</span></a></h2>
+<div class="contact_form">  
+	<div id="note"></div>
+    <div id="fields">
+        <form id="ajax-contact-form" method="post" enctype="multipart/form-data">
+        	{% csrf_token %}
+        	<div class="fieldWrapper">
+	            <!-- Display each form. The as_p method wraps each element in a paragraph
+	                 (<p>) element. This ensures each element appears on a new line,
+	                 making everything look neater. -->
+	            <h3 class ="title"> Your contact/login information (remember this information) </h3>
+	            <div class="row">
+	            	<div class="span8">
+	            		{% if user_form.username.errors %}
+			            {{user_form.password.errors}}
+			            <div class="alert alert-danger"><h4 class="title"><a href="#">{{user_form.username.errors}}</a></h4></div>
+			            {% endif %}
+			            {{user_form.username}}
+			        </div>
+		        </div>
+		        <div class="row">
+	            	<div class="span4">
+	            		{{user_form.first_name.errors}}
+	            		{{user_form.first_name}} 
+	           		</div>
+	            	<div class="span4">
+	            		{{user_form.last_name.errors}}
+	            		{{user_form.last_name}} 
+	           		</div>
+		    	</div>
+		       	<div class="row">
+	            	<div class="span8">
+	            		{{profile_form.phone_number.errors}}
+	            		{{profile_form.phone_number}} 
+	           		</div>
+		    	</div>
+		        <div class="row">
+		            <div class="span8">
+		            	{{user_form.password.errors}}
+		  		        {{user_form.password}}
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span8">
+		            	{{user_form.password2.errors}}
+		  		        {{user_form.password2}}
+		            </div>
+	            </div>
+	            <div class="row">
+	            	<div class="span8">
+	            	<h3 class ="title"> Your company information <span id="butimarecruiter"> (This is what the public will see) </span></h3> 
+	           		</div>
+	            </div>
+	           	<div class="row">
+	            	<div class="span8">
+	            		{{profile_form.company.errors}}
+	            		{{profile_form.company}} 
+	           		</div>
+		    	</div>
+	           	<div class="row">
+	           		<div class="span8">
+	           			{{profile_form.company_website.errors}}
+	            		{{profile_form.company_website}} 
+	           		</div>
+		    	</div>
+		    	<div class="row">
+	            	<div class="span8">
+	            		{{profile_form.company_bio.errors}}
+	            		{{profile_form.company_bio}} 
+	           		</div>
+		    	</div>
+		    	<div class="row">
+	            	<div class="ruben_buffer"></div>
+	            	<div class="span4">
+	            		<label>What major(s) are you hiring? <span id="butimarecruiter">(Required)</span></label>
+	            		{{profile_form.majors_wanted.errors}}
+	            		{{profile_form.majors_wanted}}
+	           		</div>
+	           		<div class="span4">
+	           			<label>What grade levels are you hiring? <span id="butimarecruiter">(Required)</span></label>
+	           			{{profile_form.grade_level_wanted.errors}}
+	           			{{profile_form.grade_level_wanted}}
+	           		</div>
+		    	</div>
+		    	<div class="row">
+	            	<div class="span4">
+	            		<label>Days Attending <span id="butimarecruiter">(Required)</span></label>
+	            		{{profile_form.days_attending.errors}}
+	            		{{profile_form.days_attending}}
+	           		</div>
+	           		<div class="span4">
+	           			<label>Logo</label>
+		           		{{profile_form.logo.errors}}
+	            		{{profile_form.logo}}
+	           		</div>
+		    	</div>
+		    	<div class="row">
+	            	<div class="span8">
+	            	<h3 class ="title"> Finally, some logistical information <span id="butimarecruiter"> (To help the career fair staff) </span></h3> 
+	           		</div>
+	            </div>
+		    	<div class="row">
+			    	<div class="span4">
+			<label>How many tables are you requesting for Friday? <span id="butimarecruiter">(Required)</span></label>
+					{{profile_form.friday_number_of_tables.errors}}
+		            		{{profile_form.friday_number_of_tables}}
+		           	</div>
+				<div class="span4">
+				<label> How many tables are you requesting for Saturday? <span id="butimarecruiter">(Required)</span></label>
+					{{profile_form.saturday_number_of_tables.errors}}
+					{{profile_form.saturday_number_of_tables}}
+				</div>
+		        </div>
+		        <div class="row">
+		           	<div class="span4">
+		           		<label>Will you be needing interview rooms on Friday?  If so, how many?</label>
+			           		{{profile_form.interview_rooms_friday.errors}}
+		            		{{profile_form.interview_rooms_friday}}
+		            		<br>From:<br>
+		            		{{profile_form.interview_friday_from.errors}}
+		            		{{profile_form.interview_friday_from}}
+		            		<br>To:<br>
+		            		{{profile_form.interview_friday_to.errors}}
+		            		{{profile_form.interview_friday_to}}
+		           	</div>
+		           	<div class="span4">
+		           		<label>Will you be needing interview rooms on Satuday? If so, how many?</label>
+			           		{{profile_form.interview_rooms_saturday.errors}}
+		            		{{profile_form.interview_rooms_saturday}}
+		            		<br>From:<br>
+		            		{{profile_form.interview_saturday_from.errors}}
+		            		{{profile_form.interview_saturday_from}}
+		            		<br>To:<br>
+		            		{{profile_form.interview_saturday_to.errors}}
+		            		{{profile_form.interview_saturday_to}}
+		           	</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="span4">
+		           		<label>Would you like to sponsor the career fair? If so, pick the sponsorship level you are interested in from below <a href="/sponsor">(more info)</a></label>
+			           		{{profile_form.sponsor.errors}}
+		            		{{profile_form.sponsor}}
+		           	</div>
+				{% if page.registrationpage.show_sponsorship_items%}
+				<div class="span4">
+					<label>Would you like to pick a sponsorship item?  If so pick the item(s) that interests you from below. <a href="/sponsor">(more info)</a>  Please note the deadline for picking these items is <b>July 21st.</b></label>
+					{{profile_form.sponsorshipitem.errors}}
+					{{profile_form.sponsorshipitem}}
+				</div>
+				{% endif %}
+		          </div>
+		    	<div class="row">
+		    		<div class="span8">
+		    			<label>Who do you plan on bringing, and on what days? (include yourself if you are going, check the box if they are an RPI alum)</label>
+			    		<div class="row">
+			    			<div class="span8">
+					{% if rep_formset.error %}						
+					<div class="row"><div class="span8"><div class="alert alert-danger"><h2>{{rep_formset.errors}}</h2></div></div></div>
+					{% endif %}
+		    			    {{ rep_formset.management_form }}
+						    {% for rep_form in rep_formset %}
+						        <div class="rep-formset">
+						            {% if rep_form.rep.errors %}
+						                {% for error in rep_form.rep.errors %}
+						                   <div class="alert alert-danger"> {{ error|escape }}</div>
+						                {% endfor %}
+						            {% endif %}
+
+							    {{ rep_form.rep }}
+							    {{ rep_form.days_attending}}
+							    {{ rep_form.days_attending.errors}}
+							
+						            {{ rep_form.is_alumni }}
+						            {% if rep_form.is_alumni.errors %}
+						                {% for error in rep_form.is_alumni.errors %}
+						                    {{ error|escape }}
+						                {% endfor %}
+						            {% endif %}
+						        </div>
+						    {% endfor %}
+
+						    {% if rep_formset.non_form_errors %}
+						        {% for error in rep_formset.non_form_errors %}
+						            <div class = "alert alert-danger"><h4 class="title">{{ error|escape }}</h2></div>
+						        {% endfor %}
+						    {% endif %}
+		    				</div>
+		    			</div>
+		    		</div>
+		    	</div>
+	<br><br>
+	<div class="row">
+            <div class="span9">
+                <div class="alert alert-info">
+			All corporate representatives are cordially invited to the corporate reception on Friday, September 22nd from 4:30pm to 8:30pm. This is a    	                     great opportunity to meet our staff and be thanked for supporting the Career Fair. If you and your colleagues are interested in attending, 				please <a href="https://39thnscfreception.splashthat.com/" target="_blank">RSVP for the Corporate Reception here.</a>
+                </div>
+            </div>
+        </div>	
+	
+	<div class="form-actions">
+      		 <input class="btn btn-default btn-lg" type="submit"
+          	  value="{% if page.form.button_text %}{{ page.form.button_text }}{% else %}{% trans "Submit" %}{% endif %}">
+   		 </div>
+        </form>
+    </div>
+</div> 
+{% endblock %}                 

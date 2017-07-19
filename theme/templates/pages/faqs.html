@@ -1,0 +1,52 @@
+    <!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    {% block all_content %}
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                <section>
+                	<div class="row">
+                    	<div class="span1"> 
+                        </div>
+                    	<div class="span9">
+                        {% editable page.faqpage.heading %}
+                        <h1 class="title">{{page.faqpage.heading}}</h1>
+                        {% endeditable %}
+                        </div>                	
+                	</div>
+                    {% for faq in page.faqpage.question.all %}
+                    <div class="row">
+                        <div class="span1"> 
+                        </div>
+                        <div class="span9">
+                        {% editable faq.question %}
+                        <h3>{{faq.question|richtext_filters|safe}}</h3>
+                        {% endeditable %}
+                        </div>                  
+                    </div>
+
+                    <div class="row">
+                        <div class="span1"> 
+                        </div>
+                        <div class="span9">
+                        <p>
+                        {% editable faq.answer %}
+                        {{faq.answer|richtext_filters|safe}}
+                        {% endeditable %}
+                        </p>
+                        </div>                  
+                    </div>
+                    {% endfor %}
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    {% endblock %}

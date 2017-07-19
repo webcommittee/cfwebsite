@@ -1,0 +1,77 @@
+{% load mathfilters %}
+{{page_type.email_message}}
+Here is your invoice.
+You may either pay it by check:
+Address to: NSBE/SHPE Career Fair 
+Memo: 39th Annual NSBE/SHPE Career Fair 
+Mail to: NSBE/SHPE Career Fair, 1999 Burdett Ave, Troy, NY, 12180 or by going to rpicareerfair.org/dashboard/prepaymentscreen"
+
+{% if "Friday" in company.days_attending and "Saturday" in company.days_attending %}
+WEEKEND BASE FEE ($1050)
+Registration Fee ($470.00) x1
+One Table for each day ($125.00) x2
+Two Corporate Representatives each day ($200.00) x2
+Representative Breakfast (Included)
+Representative Lunch (Included)
+Weekend discount (-$70)
+
+{% if company.friday_number_of_tables > 1 %}
+Additional friday tables x{{company.friday_number_of_tables|sub:1}} (${{company.friday_number_of_tables|sub:1|mul:paypal_info.price_per_table}})
+{% endif %}
+{% if company.friday_representatives.all|length > 2 %}
+Additional friday reps x{{company.friday_representatives.all|length}} (${{company.friday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}})
+{% endif %}
+{% if company.saturday_number_of_tables > 1 %}
+Additional Saturday  tables x{{company.saturday_number_of_tables|sub:1}} (${{company.saturday_number_of_tables|sub:1|mul:paypal_info.price_per_table}})
+{% endif %}
+{% if company.saturday_representatives.all|length > 2 %}
+Additional Saturday reps x{{company.saturday_representatives.all|length}} (${{company.saturdau_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}})
+{% endif %}
+{% elif "Friday" in company.days_attending %}
+FRIDAY  BASE FEE ($560.00) 
+Registration Fee ($235.00) x1
+One Table ($125.00) x1
+Two Corporate Representatives ($200.00) x1
+Representative Breakfast (Included) 
+Representative Lunch (Included)
+
+{% if company.friday_number_of_tables > 1 %}
+Additional friday tables x{{company.friday_number_of_tables|sub:1}} (${{company.friday_number_of_tables|sub:1|mul:paypal_info.price_per_table}})
+{% endif %}
+
+{% if company.friday_representatives.all|length > 2 %}
+Additional friday reps x{{company.friday_representatives.all|length}} (${{company.friday_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}})
+{% endif %}
+
+{% elif "Saturday" in company.days_attending %}        
+SATURDAY BASE FEE ($560.00)
+Registration Fee ($235.00) x1
+One Table ($125.00) x1
+Two Corporate Representatives ($200.00) x1
+Representative Breakfast (Included)
+Representative Lunch (Included)
+
+{% if company.saturday_number_of_tables > 1 %}
+Additional Saturday  tables x{{company.saturday_number_of_tables|sub:1}} (${{company.saturday_number_of_tables|sub:1|mul:paypal_info.price_per_table}})
+{% endif %}
+{% if company.saturday_representatives.all|length > 2 %}
+Additional Saturday reps x{{company.saturday_representatives.all|length}} (${{company.saturdau_representatives.all|length|sub:2|mul:paypal_info.price_per_rep}})
+{% endif %}
+{% endif %}
+
+{% if company.sponsor %}
+{{sponsor.title}} {{sponsor.price}}
+	{% if sponsor.num_free_tables %}
+	Free table x{{sponsor.num_free_tables}}{{free_tables}}
+	{% endif %}
+	{% if sponsor.num_free_reps %}
+	Free representative x{{sponsor.num_free_reps}} {{free_reps}}
+{% endif %}
+
+{% if company.sponsorshipitem %}
+	{% for item in company.sponsorshipiem.all %}
+		{{item.name}} {{item.price}}
+	{% endfor %}
+{% endif %}
+{% endif %}
+TOTAL:  ${{company.total_bill}}

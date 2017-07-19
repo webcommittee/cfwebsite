@@ -1,0 +1,13 @@
+syntax: glob
+*.pyc
+*.pyo
+*.db
+*.psql
+*.pem
+.DS_Store
+.coverage
+settings.py
+local_settings.py
+
+syntax: regexp
+^static/

@@ -1,0 +1,25 @@
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+
+<div class="header">
+    <div class="wrap">
+        <div class="navbar navbar_ clearfix">
+            <div class="container">
+                <div class="row">
+                    <div class="span4">
+                        <div class="logo"><a href="/"><img src="{% static "media/uploads/static images/header.png" %}" alt="" /></a></div>                        
+                    </div>
+                    <div class="span8">
+                        <div class="follow_us">
+                            <ul>
+                                <li><a href="#"> </a></li>
+                                <li><a href="#"> </a></li>
+                            </ul>
+                        </div>
+                        <div class="clear"></div>
+                        {% page_menu "pages/menus/dropdown.html" %}                     
+                    </div>
+                </div>                
+            </div>
+         </div>
+    </div>    
+</div>

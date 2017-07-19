@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+
+    <!--page_container-->
+    {% block all_content %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var $cart = $('#selected-seats'), //Sitting Area
+            $counter = $('#counter'), //Votess
+            $warning = $('#warning');
+            var old_seats;
+            var day = "friday";
+            var user_selection = [];
+            var selected = null;
+            
+            var sc = $('#seat-map').seatCharts({
+                map: [  //Seating chart
+					'__________________________',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a__a___a_a____a_a___a__a_',
+                    '_a___aaa___aaaa___aaa___a_',
+                    '_a______________________a_',
+                    '______aaaaaaaaaaaaaa______', 
+				],
+                naming : {
+                    top : false,
+                    getLabel : function (character, row, column) {
+                        return column;
+                    },
+	    	    getId : function(character, row, column){
+	    		return this.rows.indexOf(row)+'_'+column;
+	    	    },
+	    	    rows : ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB','CC','DD','EE','FF','GG','HH','II','JJ','KK','LL','MM','NN','OO','PP']
+                },
+                legend : { //It's confused but don't fucking touch it
+                    node : $('#legend'),
+                    items : [
+                        [ 'a', 'available',   'Selected' ],
+                        [ 'a', 'unavailable', 'Available'],
+                        [ 'a', 'selected', 'Unavailable']
+                    ]                   
+                },
+                
+                click: function () { //Click event
+                    "{% if user.is_staff %}";
+                    $warning.text("");
+                    if (this.status() == 'available') { //Checked
+                        //Update Number
+                        //update totalnum
+                            
+                        //Delete reservation
+                        $('#cart-item-'+this.settings.id).remove();
+                        //optional
+                        return 'unavailable';
+                    } else if (sc.find('available').length === 3 ){
+                        $warning.text("Wtf no, you can't reserve more than three tables for one company.");
+                        return this.style();
+                    } else if (this.status() == 'unavailable') { //optional seat
+                        $('<li>R'+(this.settings.row+1)+' S'+this.settings.label+'</li>')
+                            .attr('id', 'cart-item-'+this.settings.id)
+                            .data('seatId', this.settings.id)
+                            .appendTo($cart);
+
+                        $counter.text(sc.find('available').length+1);
+                                    
+                        return 'available';
+                    } else if (this.status() == 'selected') { //unselect
+                        $warning.text("It's reserved already, sorry!");
+                        return 'selected';
+                    } else {
+                        return this.style();
+                    }
+
+                    "{% else %}";
+                    if (this.status() == 'selected') { //Checked
+                        //Update Number
+                        //optional
+                        return 'selected';
+                    } else if (this.status() == 'available') { //optional seat             
+                        return 'available';
+                    } else if (this.status() == 'unavailable') { //sold
+                        return 'unavailable';
+                    } else {
+                        return this.style();
+                    }
+                    "{% endif %}";
+                }
+            });
+
+            sc.find('available').status('unavailable');
+
+    $("#friday-toggle").click(function(){
+        day = "friday";
+        sc.find('available').status('unavailable');
+        sc.find('selected').status('unavailable');
+        refreshData(selected);
+    });
+
+    $("#saturday-toggle").click(function(){
+        day = "saturday";
+        sc.find('available').status('unavailable');
+        sc.find('selected').status('unavailable');
+        refreshData(selected);
+
+    });
+
+    sc.find('available').status('unavailable');
+
+            $.ajax({
+                type     : 'get',
+                url      : '/bookings/get_company/{{company_profile.user.id}}/'+day,
+                dataType : 'json',
+                success  : function(response) {
+                    //iterate through all bookings for our event 
+                    $.each(response.others, function(index, other) {
+                        //find seats reserved by people other than the
+                        // specified company by id and set its status to selected
+			console.log(other.seat_id);
+                        sc.status(other.seat_id, 'selected');
+                    });
+
+                    $.each(response.bookings, function(index, booking) {
+                        //find seat by id and set its status to unavailable
+                        sc.status(booking.seat_id, 'available');
+                    });
+
+                    old_seats = sc.find('available').seatIds;
+                }
+            });
+
+            $("#friday-toggle").click(function(){
+                day = "friday";
+                refreshData(selected);
+                sc.find('available').status('unavailable');
+                sc.find('selected').status('unavailable');
+            });
+
+            $("#saturday-toggle").click(function(){
+                day = "saturday";
+                sc.find('available').status('unavailable');
+                sc.find('selected').status('unavailable');
+                refreshData(selected);
+
+            });
+
+            $(".row.selectable").click(function(){
+                if (selected !== null){
+                    $(selected).css("background-color",'');
+                }
+                selected = this;
+                $(selected).css("background-color","#B9DEA0");
+                refreshData(selected);
+                sc.find('available').status('unavailable');
+            });
+
+            function refreshData(div){
+                    $.ajax({
+                    type     : 'get',
+                    url      : '/bookings/get_company/{{company_profile.user.id}}/'+day+'/',
+                    dataType : 'json',
+                    success  : function(response) {
+                        //iterate through all bookings for our event 
+                        $.each(response.others, function(index, other) {
+                            //find seats reserved by people other than the
+                            
+			    // specified company by id and set its status to selected
+                            console.log(other.seat_id);
+			    sc.status(other.seat_id, 'selected');
+                        });
+
+                        $.each(response.bookings, function(index, booking) {
+                            //find seat by id and set its status to unavailable
+                            
+			    sc.status(booking.seat_id, 'available');
+                        });
+                        old_seats = sc.find('available').seatIds;
+                    }
+                });
+            }
+
+            function getCookie(c_name)
+                {
+                    if (document.cookie.length > 0)
+                    {
+                        c_start = document.cookie.indexOf(c_name + "=");
+                        if (c_start != -1)
+                        {
+                            c_start = c_start + c_name.length + 1;
+                            c_end = document.cookie.indexOf(";", c_start);
+                            if (c_end == -1) c_end = document.cookie.length;
+                            return unescape(document.cookie.substring(c_start,c_end));
+                        }
+                    }
+                 return "";
+                } 
+        });
+    </script>
+	<div class="page_container">
+    	<div class="wrap">
+        	<div class="container">
+        		<div id="ruben_buffer">
+                <section>
+                	<div class="row">
+                    	<div class="span2">
+                        	<h2 class="title"><span>Company Profile</span></h2> 
+                        </div>
+                        <div class="span2">   
+                            <h2 class="title">{{company_profile.company}}</h2>
+                        </div>
+                        <div class="span4">
+                            <h2 class="title">table</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span2">
+                            <img class="img-border" src="{{MEDIA_URL}}{{company_profile.logo}}"/>                      
+                        </div>
+                    	<div class="span10">
+                            <div class="row">
+                                <div class="span2">
+                                </div>
+                                <div class="span3">   
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="span2">
+                                    {% if company_profile.company_bio %}
+                                    <h3>Bio</h3>
+                                    {{company_profile.company_bio}}
+                                    {% endif %}
+                                    <h3>Days attending</h3>
+                                    <span>{% for day in company_profile.days_attending %}{{day}}<br> {% endfor %}</span>
+                                    <h3>Majors wanted</h3>
+                                    <span>{% for major in company_profile.majors_wanted %}{{major}}<br> {% endfor %}</span>
+                                    <h3>Grade levels wanted</h3>
+                                    <span>{% for grade in company_profile.grade_level_wanted %}{{grade}}<br> {% endfor %}</span>
+                                    {% if company_profile.application_website %}
+                                    <h3>Where to apply</h3>
+                                    <span><a href="{{company_profile.application_website}}">{{company_profile.application_website}}</a></span>
+                                    {% endif %}
+                                    {% if company_profile.public_email %}
+                                    <h3>Contact</h3>
+                                    {{company_profile.public_email}}
+                                    {% endif %}
+                                </div>
+                                <div class="span8">
+                                    <div class="row">
+                                        <div class="span8">
+                                           <ul class="nav nav-tabs">
+                                                <li id="friday-toggle"class="active"><a data-toggle="tab" href="#friday">Friday</a></li>
+                                                <li id="saturday-toggle"><a data-toggle="tab" href="#saturday">Saturday</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="span8">
+                                         <div class="demo">
+                                            <div id="seat-map">
+                                                <div class="front" style="margin:0 32px 10px 110px">{% if user.is_staff %}  [PERMISSIONS: ADMIN] <br> You have permissions to alter this table.  Be careful! {% endif %}</div>                 
+                                             </div>       
+                                        </div>
+				
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user.is_active and user.is_staff %}
+                            <div class="row">
+                                <div class="span4">
+                                </div>
+                                <div class="span3">
+                                    <div id="table-submit" class="btn btn-default btn-lg">Submit changes to database</div>
+                                </div>
+                                <div class="span2">
+                                    <div id="warning" ><h2 class="title"></h2></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                            <div class="span4">
+                            </div>
+                                <div class="span2">
+                                    <p>Tables: <span id="counter">0</span></p>
+                                    <p>Table: </p>
+                                </div>
+                                <div class="span3">
+                                    <div id="legend"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>                	
+                	</div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endblock %}
+    <!--//page_container-->
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+$(function() {$('.mezzanine-form :input:visible:enabled:first').focus();});
+</script>
+{% editable_loader %}
+{% endblock %}
+
+

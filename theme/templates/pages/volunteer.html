@@ -1,0 +1,74 @@
+
+ <!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load mezzanine_tags i18n %}
+{% block main %}
+{{ block.super }}
+ {% block all_content %}
+<head>
+<script type="text/javascript">
+$(document).ready(function () {
+	$('option').mousedown(function(e) {
+   		e.preventDefault();
+    	$(this).prop('selected', !$(this).prop('selected'));
+    return false;
+	});
+	$('.rep-formset').formset({
+        addText: 'Add representative',
+        deleteText: 'remove'
+    });
+});
+</script>
+</head>
+    <div class="page_container">
+        <div class="wrap">
+            <div class="container">
+                <div id="ruben_buffer">
+                </div>
+                <div class="row">
+                	<div class="span2">
+                	</div>
+                	<div class="span7">
+                    {% if request.GET.sent %}
+                        {% editable page.form.response %}
+                        <h2 class="title">{{ page.form.response|richtext_filters|safe }}</h2>
+                        {% endeditable %}
+                    {% else %}
+                        {% errors_for form %}
+                	   <h2 class="title">Volunteer signup form</h2>
+                       {% if user.studentprofile %}
+                       <div class="row">
+                            <div class="span8">
+                                <ul class="nav nav-tabs">
+                                    <li><a href="/dashboard">Dashboard</a></li>
+                                    <li><a href="/dashboard/edit_profile">Edit Profile</a></li>
+                                    <li class="active"><a href="/volunteer">Volunteer</a></li>
+                                    <li><a href="/company-search">Company Search</a></li>
+                                </ul>    
+                            </div>
+                        </div>
+                       {% endif %}
+                        <form id="ajax-contact-form" method="post" enctype="multipart/form-data">
+                            <div class="volunteer">
+                            {{form.page.content}}
+                            {% csrf_token %}
+                        	{% for f in form %}
+                            <label>{{f.label}}</label>
+                            {{f}}
+                            {{f.error}}
+                            {% endfor %}
+                            </div>
+                            <div class="form-actions">
+                                <input class="btn btn-default btn-lg" type="submit"
+                                value="{% if page.form.button_text %}{{ page.form.button_text }}{% else %}{% trans "Submit" %}{% endif %}">
+                            </div>
+                        </form>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% endblock %}
