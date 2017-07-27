@@ -259,12 +259,12 @@
                                     </div>
                                    {% endif %}
 				   {% if user.companyprofile.interview_rooms_friday %}
-                                    Friday, 9/30: You are requesting <b>{{user.companyprofile.interview_rooms_friday}}</b> room{% if user.companyprofile.interview_rooms_friday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_friday_from}}</b> to <b>{{user.companyprofile.interview_friday_to}}</b>
+                                    Friday, 9/22: You are requesting <b>{{user.companyprofile.interview_rooms_friday}}</b> room{% if user.companyprofile.interview_rooms_friday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_friday_from}}</b> to <b>{{user.companyprofile.interview_friday_to}}</b>
                                     <br>
                                     <br>
                                     {% endif %}
                                     {% if user.companyprofile.interview_rooms_saturday %}
-                                    Saturday, 10/1: You are requesting <b>{{user.companyprofile.interview_rooms_saturday}}</b> room{% if user.companyprofile.interview_rooms_saturday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_saturday_from}}</b> to <b>{{user.companyprofile.interview_saturday_to}}</b>
+                                    Saturday, 9/23: You are requesting <b>{{user.companyprofile.interview_rooms_saturday}}</b> room{% if user.companyprofile.interview_rooms_saturday > 1 %}s{% endif %} from <b>{{user.companyprofile.interview_saturday_from}}</b> to <b>{{user.companyprofile.interview_saturday_to}}</b>
                                     {% endif %}<br><br><br>
                                     <h3>Representatives ({{user.companyprofile.number_of_representatives}})</h3>
                                     {% for rep in user.companyprofile.reps.all %} {% if rep.is_alumni %} ** {% endif %} {{rep}}<br> {% endfor %}                                    
