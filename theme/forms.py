@@ -120,54 +120,54 @@ class CompanyProfileForm(forms.ModelForm):
     logo = forms.FileField(widget=forms.FileInput(attrs={'accept':'image/*'}), required=False)
     class Meta:
         model = CompanyProfile
-        fields = ('company', 'phone_number', 'company_website' , 'logo' , 
+        fields = ('company', 'phone_number', 'company_website' , 'logo' ,
             'days_attending', 'majors_wanted', 'grade_level_wanted', 'company_bio',
-             'friday_number_of_tables', 'saturday_number_of_tables', 'sponsor', 'sponsorshipitem', 'interview_rooms_friday', 
+            'friday_number_of_tables', 'saturday_number_of_tables', 'sponsor', 'sponsorshipitem', 'interview_rooms_friday',
             'interview_friday_from', 'interview_friday_to', 'interview_rooms_saturday',
             'interview_saturday_from' , 'interview_saturday_to')
 
     def clean_friday_number_of_tables(self):
-	friday_number_of_tables = self.cleaned_data['friday_number_of_tables']
-	try:
-	    if friday_number_of_tables < 0:
-	         raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
-	    try:    
-		days_attending = self.cleaned_data['days_attending']
-	   	if not 'Friday' in days_attending and friday_number_of_tables > 0:
-			raise forms.ValidationError("You can't have a table on a day you aren't attending!")
-		elif 'Friday' in days_attending and friday_number_of_tables <= 0:
-			raise forms.ValidationError("You need to have at least one table on a day you are attending!")
-	    except KeyError:
-		pass
-	except AttributeError:
-	    pass
+        friday_number_of_tables = self.cleaned_data['friday_number_of_tables']
+        try:
+            if friday_number_of_tables < 0:
+                raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
+            try:
+                days_attending = self.cleaned_data['days_attending']
+                if not 'Friday' in days_attending and friday_number_of_tables > 0:
+                    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
+                elif 'Friday' in days_attending and friday_number_of_tables <= 0:
+                    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
+            except KeyError:
+                pass
+        except AttributeError:
+            pass
 
-	except TypeError:
-	    raise forms.ValidationError("We don't recognize that as a number, maybe take out the commas?")
-	
-	return friday_number_of_tables
+        except TypeError:
+            raise forms.ValidationError("We don't recognize that as a number, maybe take out the commas?")
+
+        return friday_number_of_tables
 
     def clean_saturday_number_of_tables(self):
-	saturday_number_of_tables = self.cleaned_data['saturday_number_of_tables']
-	try:
+        saturday_number_of_tables = self.cleaned_data['saturday_number_of_tables']
+        try:
             if saturday_number_of_tables < 0:
-	        raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
-	    try:
-		days_attending = self.cleaned_data['days_attending']
-	    	if not 'Saturday' in days_attending and saturday_number_of_tables > 0:
-		    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
-		elif 'Saturday' in days_attending and saturday_number_of_tables <= 0:
-		    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
-	    except KeyError:
-		pass
- 	except AttributeError:
-	    pass
-	
-	except TypeError:
-	    raise forms.ValidationError("That's not a number")
+                raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
+            try:
+                days_attending = self.cleaned_data['days_attending']
+                if not 'Saturday' in days_attending and saturday_number_of_tables > 0:
+                    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
+                elif 'Saturday' in days_attending and saturday_number_of_tables <= 0:
+                    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
+            except KeyError:
+                pass
+        except AttributeError:
+            pass
 
-	return saturday_number_of_tables
-    
+        except TypeError:
+            raise forms.ValidationError("That's not a number")
+
+        return saturday_number_of_tables
+
     def clean_picture(self):
         picture = self.cleaned_data['picture']
 
@@ -216,8 +216,8 @@ class RepForm(forms.Form):
     is_alumni = forms.BooleanField(required=False)
     days_attending = forms.MultipleChoiceField(widget=forms.SelectMultiple(), choices=DAY_CHOICES)
     class Meta:
-	model = CompanyRep
-	fields = ('rep', 'is_alumni', 'days_attending')
+        model = CompanyRep
+        fields = ('rep', 'is_alumni', 'days_attending')
 
 class BaseRepFormSet(BaseFormSet):
     def clean(self):
@@ -236,7 +236,7 @@ class BaseRepFormSet(BaseFormSet):
                         duplicates = True
                     reps.append(rep)
 
-	if len(reps) == 0:
+        if len(reps) == 0:
             raise forms.ValidationError("You need to have at least one rep!")
 
 class EditCompanyProfileForm(forms.ModelForm):
@@ -251,9 +251,9 @@ class EditCompanyProfileForm(forms.ModelForm):
     saturday_number_of_tables = forms.IntegerField(widget=forms.TextInput(attrs={'value': 0}), required=False)
     class Meta:
         model = CompanyProfile
-        fields = ('company', 'phone_number', 'company_website' , 'logo' , 
+        fields = ('company', 'phone_number', 'company_website' , 'logo' ,
             'days_attending', 'majors_wanted', 'grade_level_wanted', 'company_bio', 'friday_number_of_tables', 'saturday_number_of_tables',
-            'sponsor', 'sponsorshipitem',  'interview_rooms_friday', 
+            'sponsor', 'sponsorshipitem',  'interview_rooms_friday',
             'interview_friday_from', 'interview_friday_to', 'interview_rooms_saturday',
             'interview_saturday_from' , 'interview_saturday_to')
 
@@ -264,47 +264,47 @@ class EditCompanyProfileForm(forms.ModelForm):
 	return sponsor
 
     def clean_friday_number_of_tables(self):
-	friday_number_of_tables = self.cleaned_data['friday_number_of_tables']
-	try:
-	    if friday_number_of_tables < 0:
-	         raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
-	    try:
-	    	days_attending = self.cleaned_data['days_attending']
-	    	if not 'Friday' in days_attending and friday_number_of_tables > 0:
-		    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
-		elif 'Friday' in days_attending and friday_number_of_tables <= 0:
-			raise forms.ValidationError("You need to have at least one table on a day you are attending!")
-	    except KeyError:
-		pass
-	except AttributeError:
-	    pass
+        friday_number_of_tables = self.cleaned_data['friday_number_of_tables']
+        try:
+            if friday_number_of_tables < 0:
+                raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
+            try:
+                days_attending = self.cleaned_data['days_attending']
+                if not 'Friday' in days_attending and friday_number_of_tables > 0:
+                    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
+                elif 'Friday' in days_attending and friday_number_of_tables <= 0:
+                    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
+            except KeyError:
+                pass
+        except AttributeError:
+            pass
 
-	except TypeError:
-	    raise forms.ValidationError("We don't recognize that as a number, maybe take out the commas?")
-	
-	return friday_number_of_tables
+        except TypeError:
+            raise forms.ValidationError("We don't recognize that as a number, maybe take out the commas?")
+
+        return friday_number_of_tables
 
     def clean_saturday_number_of_tables(self):
-	saturday_number_of_tables = self.cleaned_data['saturday_number_of_tables']
-	try:
+        saturday_number_of_tables = self.cleaned_data['saturday_number_of_tables']
+        try:
             if saturday_number_of_tables < 0:
-	        raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
-	    try:
-	    	days_attending = self.cleaned_data['days_attending']
-	    	if (not 'Saturday' in days_attending) and saturday_number_of_tables > 0:
-		    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
-		elif 'Saturday' in days_attending and saturday_number_of_tables <= 0:
-		    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
-	    except KeyError:
-		pass
- 	except AttributeError:
-	    pass
-	
-	except TypeError:
-	    raise forms.ValidationError("That's not a number")
+                raise forms.ValidationError("Please put in a number of tables greater than or equal to 0")
+            try:
+                days_attending = self.cleaned_data['days_attending']
+                if (not 'Saturday' in days_attending) and saturday_number_of_tables > 0:
+                    raise forms.ValidationError("You can't have a table on a day you aren't attending!")
+                elif 'Saturday' in days_attending and saturday_number_of_tables <= 0:
+                    raise forms.ValidationError("You need to have at least one table on a day you are attending!")
+            except KeyError:
+                pass
+        except AttributeError:
+            pass
 
-	return saturday_number_of_tables
-    
+        except TypeError:
+            raise forms.ValidationError("That's not a number")
+
+        return saturday_number_of_tables
+
     def clean_picture(self):
         picture = self.cleaned_data['picture']
 
@@ -371,10 +371,10 @@ class StudentSearchForm(forms.ModelForm):
 def get_choices(value):
     res = set()
     if isinstance(value, list):
-	for item in value:
-	    res.add(item)
+        for item in value:
+            res.add(item)
     else:
-	res.add(value)
+        res.add(value)
     return res
 
 from django.forms.extras import SelectDateWidget
@@ -474,7 +474,7 @@ class EntriesForm(forms.Form):
 
     def __init__(self, form, request, *args, **kwargs):
         """
-        terate through the fields of the ``forms.models.Form`` instance and
+        Iterate through the fields of the ``forms.models.Form`` instance and
         create the form fields required to control including the field in
         the export (with a checkbox) or filtering the field which differs
         across field types. User a list of checkboxes when a fixed set of
@@ -569,7 +569,7 @@ class EntriesForm(forms.Form):
         field_indexes = {}
         file_field_ids = []
         date_field_ids = []
-	loc_fields = CompanyProfile._meta.get_fields()
+        loc_fields = CompanyProfile._meta.get_fields()
         for field in loc_fields:
             if self.cleaned_data["field_%s_export" % field.verbose_name.title().strip("_")]:
                 field_indexes[field.name] = len(field_indexes)
@@ -600,18 +600,18 @@ class EntriesForm(forms.Form):
                     valid_row = True
                 field_value = getattr(profile, field.name)
                 field_id = profile.id
-		verbose = field.verbose_name.title().strip("_")
+                verbose = field.verbose_name.title().strip("_")
                 filter_type = self.cleaned_data.get("field_%s_filter" % verbose)
                 filter_args = None
                 if filter_type:
-		    print filter_type
+                    print filter_type
                     if filter_type == FILTER_CHOICE_BETWEEN:
                         f, t = "field_%s_from" % verbose, "field_%s_to" % verbose
                         filter_args = [self.cleaned_data[f], self.cleaned_data[t]]
-               	    else:
-                   	field_name = "field_%s_contains" % verbose
-                    	filter_args = self.cleaned_data[field_name]
-                    	if filter_args:
+                    else:
+                        field_name = "field_%s_contains" % verbose
+                        filter_args = self.cleaned_data[field_name]
+                        if filter_args:
                             filter_args = [filter_args]
                 if filter_args:
                 # Convert dates before checking filter.
@@ -620,13 +620,13 @@ class EntriesForm(forms.Form):
                         dte = date(int(y), int(m), int(d))
                         filter_args.append(dte)
                     else:
-			if isinstance(field_value, bool):
-			    filter_args.append([str(field_value)])
-			else:
-			    filter_args.append(field_value)
+                        if isinstance(field_value, bool):
+                            filter_args.append([str(field_value)])
+                        else:
+                            filter_args.append(field_value)
                     filter_func = FILTER_FUNCS[filter_type]
-		    print filter_args, filter_func, filter_type
-		    if not filter_func(*filter_args):
+                    print filter_args, filter_func, filter_type
+                    if not filter_func(*filter_args):
                         valid_row = False
                  # Create download URL for file fields.
                 if field.name and field_id in file_field_ids:
@@ -639,14 +639,14 @@ class EntriesForm(forms.Form):
                 try:
                     #print field_indexes
                     #print field.name.strip('_')
-		    from django.db.models.fields.related import ManyToManyField
-		    if isinstance(field_value, list):
+                    from django.db.models.fields.related import ManyToManyField
+                    if isinstance(field_value, list):
                         field_value = ", ".join(field_value)
-		    elif isinstance(field, ManyToManyField):
-			field_value = ", ".join([item.__unicode__() for item in field_value.all()])
-		    elif str(field) ==  'theme.CompanyProfile.company_bio':
-			field_value = "..."
-		    current_row[field_indexes[field.name.strip('_')]] = str(field_value)
+                    elif isinstance(field, ManyToManyField):
+                        field_value = ", ".join([item.__unicode__() for item in field_value.all()])
+                    elif str(field) ==  'theme.CompanyProfile.company_bio':
+                        field_value = "..."
+                    current_row[field_indexes[field.name.strip('_')]] = str(field_value)
                 except KeyError:
                     #print esomething bad happened"
                     pass
@@ -654,5 +654,5 @@ class EntriesForm(forms.Form):
         if valid_row and current_row is not None:
             if not csv:
                 current_row.insert(0, current_entry)
-	
+
             yield current_row

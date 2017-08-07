@@ -148,7 +148,7 @@ GRADE_LEVEL_CHOICES = (('Freshman', 'Freshman'),
 MAJOR_CHOICES_FLAT = [major[0] for major in MAJOR_CHOICES]
 
 #There are two model categories:  -Pages and their corresponding "sub models"
-#				 -Profiles and other user data
+#                                 -Profiles and other user data
 
 # Page models would have stuff such as "header" and "blurb" and what not so
 # that users using the content management system (mezzanine) would be able
@@ -314,18 +314,18 @@ from django.dispatch import receiver
 @receiver(pre_delete, sender=CompanyProfile)
 def delete_table(sender, instance, **kwargs):
     if sender == CompanyProfile:
-       	import json
-	reservations = ArmoryTableData.objects.get().friday_reservations
-	friday = json.loads(instance.friday_tables)
-	saturday = json.loads(instance.saturday_tables)
-	reservations =json.loads(reservations)
+        import json
+        reservations = ArmoryTableData.objects.get().friday_reservations
+        friday = json.loads(instance.friday_tables)
+        saturday = json.loads(instance.saturday_tables)
+        reservations =json.loads(reservations)
         for table in friday:
-	    print table
+            print table
             reservations[table[1]][table[0]] = None
-	reservations = ArmoryTableData.objects.get().saturday_reservations
-	reservations = json.loads(reservations)
-	for table in saturday:
-	    reservations[table[1]][table[0]] = None
+        reservations = ArmoryTableData.objects.get().saturday_reservations
+        reservations = json.loads(reservations)
+        for table in saturday:
+            reservations[table[1]][table[0]] = None
 
 
 #
@@ -352,17 +352,17 @@ class RegistrationPage(Page, RichText):
                     "disable notifications."),
         max_length=200)
     attachment = models.FileField(_("Maybe a PDF with some information?"),
-	upload_to='uploads/company_images',
-	blank=True,
-	help_text=_("A file field.  Feel free to add whatever you want to this email."))
+        upload_to='uploads/company_images',
+        blank=True,
+        help_text=_("A file field.  Feel free to add whatever you want to this email."))
     invoice_template_text = models.FileField(_("Invoice Text Template"),
         upload_to='uploads/templates',
-	blank=True,
-	help_text=_("Text template of invoice in case html version does not render"))
+        blank=True,
+        help_text=_("Text template of invoice in case html version does not render"))
     invoice_template_html = models.FileField(_("Invoice HTML Template"),
-	upload_to='uploads/templates',
-	blank=True,
-	help_text=_("Should be identical to the text template except with added html"))
+        upload_to='uploads/templates',
+        blank=True,
+        help_text=_("Should be identical to the text template except with added html"))
     google_maps_api_key = models.CharField(max_length=200, blank=True,
         help_text="Google how to obtain a google maps key for the location mueller center and past it here")
     text_under_map = models.TextField(max_length=1000, blank=True)
@@ -411,7 +411,7 @@ class StaffProfile(Orderable):
         upload_to=upload_to("theme.Slide.image", "Headshots"),
         format="Image", max_length=255, null=True, blank=True)
     def __unicode__(self):
-	return self.name
+        return self.name
 
 class Committee(Orderable):
     committee_members = models.ManyToManyField(StaffProfile, _("Committee"))
@@ -521,8 +521,8 @@ class HomePage(Page, RichText):
 class FAQPage(Page, RichText):
     heading = models.CharField(max_length=500, help_text = "Put title here")
     class Meta:
-	verbose_name = _("Faq page")
-	verbose_name_plural = _("Faq Pages")
+        verbose_name = _("Faq page")
+        verbose_name_plural = _("Faq Pages")
 
 
 class Question(Orderable):

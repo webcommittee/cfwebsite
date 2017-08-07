@@ -52,17 +52,17 @@ from django.contrib.auth.models import User
 #
 
 class CompanyProfileInLine(admin.StackedInline):
-	model = CompanyProfile
-	can_delete = False
-	verbose_name_plural = "companyprofile"
+    model = CompanyProfile
+    can_delete = False
+    verbose_name_plural = "companyprofile"
 
 class StudentProfileInLine(admin.StackedInline):
-	model = StudentProfile
-	can_delete = True
-	verbose_name_plural = "studentprofile"
+    model = StudentProfile
+    can_delete = True
+    verbose_name_plural = "studentprofile"
 
 class UserAdmin(BaseUserAdmin):
-	inlines = (CompanyProfileInLine,StudentProfileInLine)
+    inlines = (CompanyProfileInLine,StudentProfileInLine)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
@@ -75,19 +75,19 @@ admin.site.register(User, UserAdmin)
 #
 
 class SlideInline(TabularDynamicInlineAdmin):
-	model = Slide
+    model = Slide
 
 class IconBlurbline(TabularDynamicInlineAdmin):
-	model = IconBlurb
+    model = IconBlurb
 
 class FeaturedCompanyline(TabularDynamicInlineAdmin):
-	model = FeaturedCompany
+    model = FeaturedCompany
 
 class AnnouncementLine(TabularDynamicInlineAdmin):
-	model = Announcement
+    model = Announcement
 
 class HomePageAdmin(PageAdmin):
-	inlines = (SlideInline, IconBlurbline, FeaturedCompanyline, AnnouncementLine)
+    inlines = (SlideInline, IconBlurbline, FeaturedCompanyline, AnnouncementLine)
 
 #
 #
@@ -95,13 +95,13 @@ class HomePageAdmin(PageAdmin):
 #
 
 class StaffProfileLine(TabularDynamicInlineAdmin):
-	model = StaffProfile
+    model = StaffProfile
 
 class CommitteeInline(TabularDynamicInlineAdmin):
-	model = Committee
+    model = Committee
 
 class AboutPageAdmin(PageAdmin):
-	inlines = (CommitteeInline, StaffProfileLine)
+    inlines = (CommitteeInline, StaffProfileLine)
 
 #
 #
@@ -218,7 +218,7 @@ class FAQPageAdmin(PageAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'last_name']
-    list_max_show_all = 10000 
+    list_max_show_all = 10000
 
 class CompanyAdmin(admin.ModelAdmin):
     search_fields = ['company']
@@ -230,23 +230,23 @@ class CompanyRepAdmin(admin.ModelAdmin):
     actions = ['make_attend', 'reset_attendance',  'export_selected_objects']
     list_max_show_all = 1000
     def make_attend(self, request, queryset):
-	for rep in queryset.all():
-	    rep.is_present = not rep.is_present
-	    rep.save()
-   
+        for rep in queryset.all():
+            rep.is_present = not rep.is_present
+            rep.save()
+
     def reset_attendance(self, request, queryset):
-	for rep in queryset.all():
-	    rep.is_present = False
-	    rep.save()
- 
+        for rep in queryset.all():
+            rep.is_present = False
+            rep.save()
+
     def export_selected_objects(self, request, queryset):
-	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="reps.csv"'
-	writer = csv.writer(response)
-	writer.writerow(['Name', 'Company', 'Alumni', 'Present'])
-	for rep in queryset.all():
-	   writer.writerow([rep.rep, rep.company, rep.is_alumni, rep.is_present])
-	return response
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="reps.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Name', 'Company', 'Alumni', 'Present'])
+        for rep in queryset.all():
+            writer.writerow([rep.rep, rep.company, rep.is_alumni, rep.is_present])
+        return response
 
     make_attend.short_description = "Mark this representative as present"
     reset_attendance.short_description = "CAUTION:  Mark all selected representatives as not present"

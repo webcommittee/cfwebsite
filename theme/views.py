@@ -39,9 +39,9 @@ def has_submitted_payment(user):
 
 def has_not_submitted_payment(user):
     try:
-	company = user.companyprofile
+        company = user.companyprofile
     except:
-	return True
+        return True
     return not company.has_submitted_payment
 
 # A view hooked up to the page
@@ -49,76 +49,76 @@ def send_custom_email(page_type, user):
     if page_type.send_email:
         subject = page_type.email_subject
         message = page_type.email_message
-	if page_type.email_copies:
+        if page_type.email_copies:
             email_to = page_type.email_copies.split(",")
             email_to += [user.email]
         else:
             email_to = [user.email]
-	d = Context({"email_message":message})
-	send_invoice(page_type, user)
-	plaintext = get_template('pages/custom_reg_email.txt')
-	htmly = get_template('pages/custom_reg_email.html')
-	text_content = plaintext.render(d)
-	html_content = htmly.render(d)
-	email = EmailMultiAlternatives(subject, text_content, 'Career Fair Staff', email_to)
-	email.attach_alternative(html_content, "text/html")
-	try:
-	    attachment = open(page_type.attachment.url[1:],'r')
+        d = Context({"email_message":message})
+        send_invoice(page_type, user)
+        plaintext = get_template('pages/custom_reg_email.txt')
+        htmly = get_template('pages/custom_reg_email.html')
+        text_content = plaintext.render(d)
+        html_content = htmly.render(d)
+        email = EmailMultiAlternatives(subject, text_content, 'Career Fair Staff', email_to)
+        email.attach_alternative(html_content, "text/html")
+        try:
+            attachment = open(page_type.attachment.url[1:],'r')
         except:
-	    attachment = None
-	if attachment:
-		email.attach("nsbe_shpe_cf_confirmation_packet.pdf", attachment.read(), 'application/pdf') 
-	email.send(fail_silently=False)
+            attachment = None
+        if attachment:
+            email.attach("nsbe_shpe_cf_confirmation_packet.pdf", attachment.read(), 'application/pdf')
+        email.send(fail_silently=False)
 
 def send_invoice(page_type, user):
     if page_type.send_email:
-	subject= page_type.email_subject
-	try:
-	    attachment = open(page_type.attachment.url[1:],'r')
-	except:
-	    attachment=None
-	email_to = [user.email]
+        subject= page_type.email_subject
+        try:
+            attachment = open(page_type.attachment.url[1:],'r')
+        except:
+            attachment=None
+        email_to = [user.email]
         #Ruben had hardcoded the two lines below this one. The lines from the send_custom_email function were used for this function after realizing that the hardcoded lines broke sending emails
-	#plaintext = get_template("/opt/myenv/careerfair"+page_type.invoice_template_text.url)
-	#htmly = get_template("/opt/myenv/careerfair"+page_type.invoice_template_html.url)
+        #plaintext = get_template("/opt/myenv/careerfair"+page_type.invoice_template_text.url)
+        #htmly = get_template("/opt/myenv/careerfair"+page_type.invoice_template_html.url)
         plaintext = get_template('pages/invoice.txt')
-	htmly = get_template('pages/invoice.html')
-	try:
-	    sponsorship = SponsorshipPackage.objects.get(title=user.companyprofile.sponsor)
-	except:
-	    sponsorship = None
-	d = Context({'sponsorship':sponsorship, 'paypal_info': PayPalInfo.objects.all()[0], 'company':user.companyprofile})
-	text_content = plaintext.render(d)
-	html_content = htmly.render(d)
-	email = EmailMultiAlternatives(subject, text_content, 'Career Fair Staff', email_to)
-	email.attach_alternative(html_content, "text/html")
-	email.mixed_subtype = 'related'
-	email.send()
+        htmly = get_template('pages/invoice.html')
+        try:
+            sponsorship = SponsorshipPackage.objects.get(title=user.companyprofile.sponsor)
+        except:
+            sponsorship = None
+        d = Context({'sponsorship':sponsorship, 'paypal_info': PayPalInfo.objects.all()[0], 'company':user.companyprofile})
+        text_content = plaintext.render(d)
+        html_content = htmly.render(d)
+        email = EmailMultiAlternatives(subject, text_content, 'Career Fair Staff', email_to)
+        email.attach_alternative(html_content, "text/html")
+        email.mixed_subtype = 'related'
+        email.send()
 
 def update_rep_data(company):
     company.friday_representatives.clear()
     company.saturday_representatives.clear()
     for rep in company.reps.all():
-	if "Friday" in rep.days_attending:
-	    company.friday_representatives.add(rep)
+        if "Friday" in rep.days_attending:
+            company.friday_representatives.add(rep)
         if "Saturday" in rep.days_attending:
-	    company.saturday_representatives.add(rep)
+            company.saturday_representatives.add(rep)
     company.save()
 
 # Calculates a company's registration price based off the
 # PayPalInfo object the administrative user provided and
-	# the company's signup info.
+# the company's signup info.
 def get_bill(company):
-    # Retrie ve the admin spcified prices
+    # Retrieve the admin spcified prices
     paypal_info = PayPalInfo.objects.all()[0]
     total_bill = 0
     if company.user.is_staff:
-	return paypal_info.email, paypal_info.item_name, 1
+        return paypal_info.email, paypal_info.item_name, 1
     # Calculate the base price based off the days attending
     if "Friday" in company.days_attending and "Saturday" in company.days_attending:
-	total_bill += paypal_info.weekend_price
+        total_bill += paypal_info.weekend_price
     elif "Friday" in company.days_attending:
-	total_bill += paypal_info.friday_price
+        total_bill += paypal_info.friday_price
     elif "Saturday" in company.days_attending:
         total_bill += paypal_info.saturday_price
 
@@ -132,19 +132,19 @@ def get_bill(company):
     count = 0 - len(company.days_attending)
     num_tables = company.friday_number_of_tables + company.saturday_number_of_tables
     total_bill += (num_tables+count) * paypal_info.price_per_table if num_tables > count else  0
-   
+
     if sponsorship:
-	sponsorship = SponsorshipPackage.objects.get(title=company.sponsor)
-    	total_bill -= paypal_info.price_per_rep*sponsorship.num_free_reps
-	total_bill -= paypal_info.price_per_table*sponsorship.num_free_tables
-	total_bill += sponsorship.price
-	total_bill -= sponsorship.discount
+        sponsorship = SponsorshipPackage.objects.get(title=company.sponsor)
+        total_bill -= paypal_info.price_per_rep*sponsorship.num_free_reps
+        total_bill -= paypal_info.price_per_table*sponsorship.num_free_tables
+        total_bill += sponsorship.price
+        total_bill -= sponsorship.discount
 
     for item in company.sponsorshipitem.all():
-	total_bill += item.price
+        total_bill += item.price
 
     if company.is_non_profit:
-	total_bill *= 0.85
+        total_bill *= 0.85
     return paypal_info.email, paypal_info.item_name, total_bill
 
 
@@ -167,13 +167,13 @@ def company_register(request):
     if request.method == 'POST':
 	# TODO:
 	#return HttpResponse("Registration has closed!")
-	
+
         # Attempt to grab information from the raw form information.
         # Note that we make use of both UserForm and UserProfileForm.
-	temp_email = request.POST['username']
+        temp_email = request.POST['username']
         if len(request.POST['username']) > 30:
-	    request.POST['username'] = request.POST['username'][:30]
-	user_form = UserForm(request.POST, request.FILES)
+            request.POST['username'] = request.POST['username'][:30]
+        user_form = UserForm(request.POST, request.FILES)
         profile_form = CompanyProfileForm(request.POST, request.FILES)
         rep_formset = RepFormSet(request.POST)
 
@@ -205,11 +205,11 @@ def company_register(request):
             profile.save()
 
 
-	    if 'sponsorshipitem' in  request.POST:
-	   	for item in request.POST.getlist('sponsorshipitem'):
-		    profile.sponsorshipitem.add(SponsorshipItem.objects.get(name=item))
+            if 'sponsorshipitem' in  request.POST:
+                for item in request.POST.getlist('sponsorshipitem'):
+                    profile.sponsorshipitem.add(SponsorshipItem.objects.get(name=item))
             # Now we save the CompanyProfile model instance.
-            
+
 
             # Create a bunch of representative objects
             new_reps = []
@@ -217,24 +217,24 @@ def company_register(request):
             for rep_form in rep_formset:
                 rep = rep_form.cleaned_data.get('rep')
                 is_alumni = rep_form.cleaned_data.get('is_alumni')
-		days_attending = rep_form.cleaned_data.get('days_attending')
+                days_attending = rep_form.cleaned_data.get('days_attending')
                 if rep:
                     new_rep = CompanyRep(user=user, rep=rep, is_alumni=is_alumni, company=profile.company, days_attending=days_attending)
                     new_reps.append(new_rep)
 
             CompanyRep.objects.bulk_create(new_reps)
 
-            # Associate the new reps with the CompanyProfile 
+            # Associate the new reps with the CompanyProfile
             for rep in CompanyRep.objects.filter(user=user):
                 profile.reps.add(rep)
             for rep in CompanyRep.objects.filter(user=user, is_alumni=True):
                 profile.reps_alumni.add(rep)
-           
-	    update_rep_data(profile) 
+
+            update_rep_data(profile)
             profile.number_of_representatives = len(new_reps)
-	    profile.number_of_tables = profile.friday_number_of_tables + profile.saturday_number_of_tables
+            profile.number_of_tables = profile.friday_number_of_tables + profile.saturday_number_of_tables
             email, item, bill = get_bill(profile)
-            profile.total_bill = bill 
+            profile.total_bill = bill
             new_user = profile.save()
             new_user = authenticate(username=user_form.cleaned_data['username'],
                                     password=user_form.cleaned_data['password'],)
@@ -340,8 +340,8 @@ def user_login(request):
         # This information is obtained from the login form.
         username = request.POST['username']
         password = request.POST['password']
-	if len(username) > 30:
-	    username = username[:30]
+        if len(username) > 30:
+            username = username[:30]
         # Use Django's machinery to attempt to see if the username/password
         # combination is valid - a User object is returned if it is.
         user = authenticate(username=username, password=password)
@@ -362,8 +362,8 @@ def user_login(request):
         else:
             # Bad login details were provided. So we can't log the user in.
             print "Invalid login details: {0}, {1}".format(username, password)
-            # lazy: make it return nothing so django throws an error so 
-            return  
+            # lazy: make it return nothing so django throws an error so
+            return
 
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
@@ -406,8 +406,8 @@ def edit_profile(request):
     except AttributeError:
         pass
 
-    if is_company: 
-        form = EditCompanyProfileForm(request.POST or None, initial={'company':user.companyprofile.company, 
+    if is_company:
+        form = EditCompanyProfileForm(request.POST or None, initial={'company':user.companyprofile.company,
                                                                 'company_website':user.companyprofile.company_website,
                                                                 'logo':user.companyprofile.logo,
                                                                 'days_attending':user.companyprofile.days_attending,
@@ -415,7 +415,7 @@ def edit_profile(request):
                                                                 'grade_level_wanted':user.companyprofile.grade_level_wanted,
                                                                 'company_bio':user.companyprofile.company_bio,
                                                                 'sponsor':user.companyprofile.sponsor,
-								'sponsorshipitem':[s.name for s in user.companyprofile.sponsorshipitem.all()],
+                                                                'sponsorshipitem':[s.name for s in user.companyprofile.sponsorshipitem.all()],
                                                                 'friday_number_of_tables':user.companyprofile.friday_number_of_tables,
                                                                 'saturday_number_of_tables':user.companyprofile.saturday_number_of_tables,
                                                                 'interview_rooms_friday': user.companyprofile.interview_rooms_friday,
@@ -429,7 +429,7 @@ def edit_profile(request):
         rep_data = [{'rep': l.rep, 'is_alumni': l.is_alumni, 'days_attending':l.days_attending}
                     for l in rep_links]
         rep_formset = RepFormSet(initial=rep_data)
-        
+
     else:
         # not a company, display the student edit profile form
         form = StudentProfileForm(request.POST or None, initial={'first_name':user.studentprofile.first_name,
@@ -456,21 +456,21 @@ def edit_profile(request):
             if form.is_valid() and rep_formset.is_valid():
                 profile = form.save(commit=False)
                 profile.user = user
-                
+
                 #If they chose to delete their logo, reset the url to be
                 if 'logo-clear' in request.POST:
                     profile.logo = 'uploads/default_icons/Company_icon.png'
                 if 'logo' in request.FILES:
                     profile.logo = request.FILES['logo']
                 profile.save()
-		profile.number_of_tables = profile.friday_number_of_tables + profile.saturday_number_of_tables
+                profile.number_of_tables = profile.friday_number_of_tables + profile.saturday_number_of_tables
 
                 # Representative parsing and saving
                 new_reps = []
                 for rep_form in rep_formset:
                     rep = rep_form.cleaned_data.get('rep')
                     is_alumni = rep_form.cleaned_data.get('is_alumni')
-		    days_attending = rep_form.cleaned_data.get('days_attending')
+                    days_attending = rep_form.cleaned_data.get('days_attending')
                     if rep:
                         new_rep = CompanyRep(user=user, rep=rep, is_alumni=is_alumni, company=user.companyprofile.company, days_attending=days_attending)
                         new_reps.append(new_rep)
@@ -481,15 +481,15 @@ def edit_profile(request):
                     profile.reps.add(rep)
                 for rep in CompanyRep.objects.filter(user=user, is_alumni=True):
                     profile.reps_alumni.add(rep)
-		update_rep_data(profile)
-		profile.sponsorshipitem.clear()
-		if 'sponsorshipitem' in request.POST:
-		    for item in request.POST.getlist('sponsorshipitem'):
-			profile.sponsorshipitem.add(SponsorshipItem.objects.get(name=item))
+                update_rep_data(profile)
+                profile.sponsorshipitem.clear()
+                if 'sponsorshipitem' in request.POST:
+                    for item in request.POST.getlist('sponsorshipitem'):
+                        profile.sponsorshipitem.add(SponsorshipItem.objects.get(name=item))
                 profile.number_of_representatives = len(new_reps)
                 profile.save()
                 user.save()
-                return HttpResponseRedirect('/dashboard')     
+                return HttpResponseRedirect('/dashboard')
             else:
                 print form.errors
 
@@ -506,9 +506,9 @@ def edit_profile(request):
                     profile.picture = request.FILES['picture']
                 profile.save()
                 user.save()
-                return HttpResponseRedirect('/dashboard')     
+                return HttpResponseRedirect('/dashboard')
             else:
-                print form.errors 
+                print form.errors
 
     context = {"form": form, 'rep_formset': rep_formset}
 
@@ -535,46 +535,46 @@ def company_search(request):
     if request.method == 'GET' and 'company-search-posted' in request.session and not request.GET.get('page', None):
         request.session.pop('company-search-posted')
     if not request.method == 'POST' and 'company-search-posted' in request.session:
-	request.method = 'POST'
+        request.method = 'POST'
     elif request.method == 'POST':
-	if "company" in request.POST:
-	    request.session['company_search'] = request.POST.getlist('company')[0]
-	else:
-	    request.session['company_search'] = ""
-        if "days_attending" in request.POST:
-	    request.session['days_search'] = request.POST.getlist('days_attending') 
+        if "company" in request.POST:
+            request.session['company_search'] = request.POST.getlist('company')[0]
         else:
-	    request.session['days_search'] = ""
+            request.session['company_search'] = ""
+        if "days_attending" in request.POST:
+            request.session['days_search'] = request.POST.getlist('days_attending')
+        else:
+            request.session['days_search'] = ""
         if "grade_level_wanted" in request.POST:
-	    request.session['grades_search'] = request.POST.getlist('grade_level_wanted')
-	else:
-	    request.session['grades_search'] = ""
+            request.session['grades_search'] = request.POST.getlist('grade_level_wanted')
+        else:
+            request.session['grades_search'] = ""
         if "majors_wanted" in request.POST:
-	    request.session['majors_search'] = request.POST.getlist('majors_wanted')
-	else:
-	    request.session['majors_search'] = ""
+            request.session['majors_search'] = request.POST.getlist('majors_wanted')
+        else:
+            request.session['majors_search'] = ""
 
-	request.session['company-search-posted'] = True
+        request.session['company-search-posted'] = True
 
         # the reduce function is basically saying:
         # Query results is: The list of every company that contains
-        # days_search[0], union with every company that contains 
+        # days_search[0], union with every company that contains
         # days_search[1]... basically a bunch of unions.
     if request.method == 'POST':
-	if 'company_search' in request.session and request.session['company_search']:
+        if 'company_search' in request.session and request.session['company_search']:
             query_results = query_results.filter(
                 Q (company__icontains = request.session['company_search'] ) &
                 Q (has_submitted_payment = True)
                 ).order_by('company')
         if 'days_search' in request.session and request.session['days_search']:
-	    query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(days_attending__contains=day) for day in request.session['days_search']]))
+            query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(days_attending__contains=day) for day in request.session['days_search']]))
         if 'grades_search' in request.session and request.session['grades_search']:
-	    query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(grade_level_wanted__contains=grade) for grade in request.session['grades_search']]))
+            query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(grade_level_wanted__contains=grade) for grade in request.session['grades_search']]))
         if 'majors_search' in request.session and request.session['majors_search']:
-	    query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(majors_wanted__contains=maj) for maj in request.session['majors_search']]))	    
+            query_results = query_results.filter(reduce(lambda x, y: x | y, [Q(majors_wanted__contains=maj) for maj in request.session['majors_search']]))
 
     # Show 25 companies per page
-    paginator = Paginator(query_results, 25) 
+    paginator = Paginator(query_results, 25)
     page = request.GET.get('page')
     try:
         query_results = paginator.page(page)
@@ -598,28 +598,28 @@ def student_search(request):
     if not request.method == 'POST' and 'student-search-posted' in request.session:
         request.method = 'POST'
     elif request.method == 'POST':
-	request.session['student-search-posted'] = True
+        request.session['student-search-posted'] = True
         if 'name' in request.POST and request.POST['name']:
-	    request.session['name'] = request.POST['name']
-	else:
-	    request.session['name'] = ""
+            request.session['name'] = request.POST['name']
+        else:
+            request.session['name'] = ""
         if 'major_wanted' in request.POST and request.POST['major_wanted']:
             request.session['majors_search'] = request.POST.getlist('major_wanted')
-	else:
-	    request.session['majors_search'] = ""
+        else:
+            request.session['majors_search'] = ""
         if 'grade_level_wanted' in request.POST and request.POST['grade_level_wanted']:
             request.session['grade_level_wanted'] = request.POST.getlist('grade_level_wanted')
-	else:
-	    request.session['grade_level_wanted'] = ""
+        else:
+            request.session['grade_level_wanted'] = ""
         if request.POST['minimum_GPA']:
             request.session['minimum_GPA'] = request.POST['minimum_GPA']
         else:
-	    request.session['minimum_GPA'] = 0
+            request.session['minimum_GPA'] = 0
         if "open_to_relocation" in request.POST:
-	    request.session['open_to_relocation'] = True
-	else:
-	    request.session['open_to_relocation'] = None
-        
+            request.session['open_to_relocation'] = True
+        else:
+            request.session['open_to_relocation'] = None
+
     if request.method == 'POST':
         query_results = StudentProfile.objects.filter(
             Q(first_name__icontains = request.session['name']) |
@@ -683,13 +683,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 def trans(s):
     count = ord(s[0]) - 64
     if len(s) > 1:
-	count = count + 26
+        count = count + 26
 
 def reverse_trans(s):
     if s <=26:
-	return chr(s+64)
+        return chr(s+64)
     else:
-	return chr(s+64-26)*2
+        return chr(s+64-26)*2
 
 def book_all_tables(request, day):
     print day
@@ -739,9 +739,9 @@ def book_all_tables(request, day):
 
     # Convert to json and save the data
     if day == "friday":
-        reservations_table.friday_reservations = json.dumps(reservations)   
+        reservations_table.friday_reservations = json.dumps(reservations)
     else:
-        reservations_table.saturday_reservations = json.dumps(reservations)    
+        reservations_table.saturday_reservations = json.dumps(reservations)
     reservations_table.save()
 
     # Ayy we made it
@@ -787,10 +787,10 @@ def book_table(request, day):
     # Convert to json and save the data
     if day == "friday":
         reservations_table.friday_reservations = json.dumps(reservations)
-        company.friday_tables = json.dumps(bookings)   
+        company.friday_tables = json.dumps(bookings)
     else:
         reservations_table.saturday_reservations = json.dumps(reservations)
-        company.saturday_tables = json.dumps(bookings)  
+        company.saturday_tables = json.dumps(bookings)
     reservations_table.save()
     company.save()
 
@@ -803,7 +803,7 @@ def get_bookings(request, day):
     if day == "friday":
         reservations_table_json = ArmoryTableData.objects.get().friday_reservations
     else:
-        reservations_table_json = ArmoryTableData.objects.get().saturday_reservations    
+        reservations_table_json = ArmoryTableData.objects.get().saturday_reservations
     reservations_table = jsonDec.decode(reservations_table_json)
     booked = []
     for x, column in enumerate(reservations_table):
@@ -831,7 +831,7 @@ def get_company_booking(request,uid,day):
     if day == "friday":
         reservations_table_json = ArmoryTableData.objects.get().friday_reservations
     else:
-        reservations_table_json = ArmoryTableData.objects.get().saturday_reservations 
+        reservations_table_json = ArmoryTableData.objects.get().saturday_reservations
     reservations_table = jsonDec.decode(reservations_table_json)
     for x, column in enumerate(reservations_table):
         for y, table in enumerate(column):
@@ -840,14 +840,14 @@ def get_company_booking(request,uid,day):
 
     logo_url = ""
     try:
-	logo_url = company.logo.url
+        logo_url = company.logo.url
     except ValueError:
-	logo_url = "uploads/default_icons/Company_icon.png"    
- 
-    return HttpResponse( json.dumps({"bookings": booked, "others":others_booked, 
+        logo_url = "uploads/default_icons/Company_icon.png"
+
+    return HttpResponse( json.dumps({"bookings": booked, "others":others_booked,
         "companyname":company.company, "company_bio":company.company_bio,
-        "days_attending":"<br>".join(company.days_attending), 
-        "logo":logo_url, "grade_level_wanted":"<br>".join(company.grade_level_wanted), 
+        "days_attending":"<br>".join(company.days_attending),
+        "logo":logo_url, "grade_level_wanted":"<br>".join(company.grade_level_wanted),
         "majors_wanted": "<br>".join(company.majors_wanted) }) )
 
 def armory_manipulation(request):
@@ -868,7 +868,7 @@ def view_that_asks_for_money(request):
     company.total_bill = bill
     company.save()
 
-    # career_fair_year was put here to correct the problem where 
+    # career_fair_year was put here to correct the problem where
     # invoices were not unique each year so companies had problem paying through PayPal.
     # This should be updated every year to ensure companies don't have a problem.
     career_fair_year = "2017"
@@ -886,7 +886,7 @@ def view_that_asks_for_money(request):
     }
     # Create the instance.
     form = PayPalPaymentsForm(initial=paypal_dict)
-    
+
     #Find the paypal info object to render some price information on the prepayment screen
     paypalinfo = PayPalInfo.objects.all()[0]
 
