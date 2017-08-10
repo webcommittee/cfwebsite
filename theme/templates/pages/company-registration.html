@@ -18,7 +18,7 @@ $(document).ready(function () {
 });
 </script>
 <h2 class="title"><span>Company Registration</span>  <a href="/student-registration"><span id="butimarecruiter">   (<span id="nounderline">I'm a student</span>)</span></a></h2>
-<div class="contact_form">  
+<div class="contact_form">
 	<div id="note"></div>
     <div id="fields">
         <form id="ajax-contact-form" method="post" enctype="multipart/form-data">
@@ -40,17 +40,17 @@ $(document).ready(function () {
 		        <div class="row">
 	            	<div class="span4">
 	            		{{user_form.first_name.errors}}
-	            		{{user_form.first_name}} 
+	            		{{user_form.first_name}}
 	           		</div>
 	            	<div class="span4">
 	            		{{user_form.last_name.errors}}
-	            		{{user_form.last_name}} 
+	            		{{user_form.last_name}}
 	           		</div>
 		    	</div>
 		       	<div class="row">
 	            	<div class="span8">
 	            		{{profile_form.phone_number.errors}}
-	            		{{profile_form.phone_number}} 
+	            		{{profile_form.phone_number}}
 	           		</div>
 		    	</div>
 		        <div class="row">
@@ -67,25 +67,25 @@ $(document).ready(function () {
 	            </div>
 	            <div class="row">
 	            	<div class="span8">
-	            	<h3 class ="title"> Your company information <span id="butimarecruiter"> (This is what the public will see) </span></h3> 
+	            	<h3 class ="title"> Your company information <span id="butimarecruiter"> (This is what the public will see) </span></h3>
 	           		</div>
 	            </div>
 	           	<div class="row">
 	            	<div class="span8">
 	            		{{profile_form.company.errors}}
-	            		{{profile_form.company}} 
+	            		{{profile_form.company}}
 	           		</div>
 		    	</div>
 	           	<div class="row">
 	           		<div class="span8">
 	           			{{profile_form.company_website.errors}}
-	            		{{profile_form.company_website}} 
+	            		{{profile_form.company_website}}
 	           		</div>
 		    	</div>
 		    	<div class="row">
 	            	<div class="span8">
 	            		{{profile_form.company_bio.errors}}
-	            		{{profile_form.company_bio}} 
+	            		{{profile_form.company_bio}}
 	           		</div>
 		    	</div>
 		    	<div class="row">
@@ -115,7 +115,7 @@ $(document).ready(function () {
 		    	</div>
 		    	<div class="row">
 	            	<div class="span8">
-	            	<h3 class ="title"> Finally, some logistical information <span id="butimarecruiter"> (To help the career fair staff) </span></h3> 
+	            	<h3 class ="title"> Finally, some logistical information <span id="butimarecruiter"> (To help the career fair staff) </span></h3>
 	           		</div>
 	            </div>
 		    	<div class="row">
@@ -164,7 +164,7 @@ $(document).ready(function () {
                                 -->
 				{% if page.registrationpage.show_sponsorship_items%}
 				<div class="span4">
-					<label>Would you like to pick a sponsorship item?  If so pick the item(s) that interests you from below. <a href="/sponsor">(more info)</a>  Please note the deadline for picking these items is <b>July 21st.</b></label>
+					<label>Would you like to pick a sponsorship item?  If so pick the item(s) that interests you from below. <a href="/sponsor">(more info)</a>  Please note the deadline for picking these items is <b>August 10th.</b></label>
 					{{profile_form.sponsorshipitem.errors}}
 					{{profile_form.sponsorshipitem}}
 				</div>
@@ -175,7 +175,7 @@ $(document).ready(function () {
 		    			<label>Who do you plan on bringing, and on what days? (include yourself if you are going, check the box if they are an RPI alum)</label>
 			    		<div class="row">
 			    			<div class="span8">
-					{% if rep_formset.error %}						
+					{% if rep_formset.error %}
 					<div class="row"><div class="span8"><div class="alert alert-danger"><h2>{{rep_formset.errors}}</h2></div></div></div>
 					{% endif %}
 		    			    {{ rep_formset.management_form }}
@@ -190,7 +190,7 @@ $(document).ready(function () {
 							    {{ rep_form.rep }}
 							    {{ rep_form.days_attending}}
 							    {{ rep_form.days_attending.errors}}
-							
+
 						            {{ rep_form.is_alumni }}
 						            {% if rep_form.is_alumni.errors %}
 						                {% for error in rep_form.is_alumni.errors %}
@@ -216,13 +216,13 @@ $(document).ready(function () {
 			All corporate representatives are cordially invited to the corporate reception on Friday, September 22nd from 4:30pm to 8:30pm. This is a    	                     great opportunity to meet our staff and be thanked for supporting the Career Fair. If you and your colleagues are interested in attending, 				please <a href="https://39thnscfreception.splashthat.com/" target="_blank">RSVP for the Corporate Reception here.</a>
                 </div>
             </div>
-        </div>	
-	
+        </div>
+
 	<div class="form-actions">
       		 <input class="btn btn-default btn-lg" type="submit"
           	  value="{% if page.form.button_text %}{{ page.form.button_text }}{% else %}{% trans "Submit" %}{% endif %}">
    		 </div>
         </form>
     </div>
-</div> 
-{% endblock %}                 
+</div>
+{% endblock %}
